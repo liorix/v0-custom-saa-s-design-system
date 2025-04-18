@@ -42,15 +42,15 @@ function MultipleCalendarDemo() {
   return <Calendar mode="multiple" selected={dates} onSelect={setDates} className="rounded-md border" />
 }
 
-// Export components directly
+// Export components with render function
 export const Default = {
-  component: DefaultCalendarDemo,
+  render: () => <DefaultCalendarDemo />,
 }
 
 export const DateRange = {
-  component: DateRangeCalendarDemo,
+  render: () => <DateRangeCalendarDemo />,
 }
 
 export const Multiple = {
-  component: MultipleCalendarDemo,
+  render: () => <MultipleCalendarDemo />,
 }

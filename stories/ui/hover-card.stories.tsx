@@ -46,5 +46,5 @@ function HoverCardDemo() {
 }
 
 export const Default = {
-  component: HoverCardDemo,
+  render: () => <HoverCardDemo />,
 }

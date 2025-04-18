@@ -96,19 +96,19 @@ function ToastDemo() {
   )
 }
 
-// Export components directly
+// Export components with render function
 export const Default = {
-  component: DefaultToast,
+  render: () => <DefaultToast />,
 }
 
 export const WithAction = {
-  component: ToastWithAction,
+  render: () => <ToastWithAction />,
 }
 
 export const Destructive = {
-  component: DestructiveToast,
+  render: () => <DestructiveToast />,
 }
 
 export const UseToastHook = {
-  component: ToastDemo,
+  render: () => <ToastDemo />,
 }

@@ -1,6 +1,5 @@
 "use client"
-
-import React from "react"
+import * as React from "react"
 import type { Meta, StoryObj } from "@storybook/react"
 import {
   Command,
@@ -114,11 +113,11 @@ function CommandDialogDemo() {
   )
 }
 
-// Export components directly
+// Export components with render function
 export const Default = {
-  component: DefaultCommand,
+  render: () => <DefaultCommand />,
 }
 
 export const CommandDialogExample = {
-  component: CommandDialogDemo,
+  render: () => <CommandDialogDemo />,
 }

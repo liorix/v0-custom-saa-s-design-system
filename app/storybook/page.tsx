@@ -29,7 +29,6 @@ function CategorySection({
   )
 }
 
-// Make sure this is exported as default
 export default function StorybookPage() {
   return (
     <div className="container mx-auto py-10">
@@ -46,10 +45,8 @@ export default function StorybookPage() {
             { name: "Avatar", path: "/storybook/ui/avatar" },
             { name: "Badge", path: "/storybook/ui/badge" },
             { name: "Button", path: "/storybook/ui/button" },
-            { name: "Calendar", path: "/storybook/ui/calendar" },
             { name: "Card", path: "/storybook/ui/card" },
             { name: "Checkbox", path: "/storybook/ui/checkbox" },
-            { name: "Command", path: "/storybook/ui/command" },
             { name: "Dialog", path: "/storybook/ui/dialog" },
             { name: "Dropdown Menu", path: "/storybook/ui/dropdown-menu" },
             { name: "Hover Card", path: "/storybook/ui/hover-card" },

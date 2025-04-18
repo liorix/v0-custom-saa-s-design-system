@@ -17,30 +17,30 @@ const meta: Meta<typeof Switch> = {
 export default meta
 type Story = StoryObj<typeof Switch>
 
-// Simple components that don't use hooks
-function DefaultSwitch() {
-  return <Switch />
+// Export components directly with component property
+export const Default = {
+  render: () => <Switch />,
 }
 
-function SwitchWithLabel() {
-  return (
+export const WithLabel = {
+  render: () => (
     <div className="flex items-center space-x-2">
       <Switch id="airplane-mode" />
       <Label htmlFor="airplane-mode">Airplane Mode</Label>
     </div>
-  )
+  ),
 }
 
-function CheckedSwitch() {
-  return <Switch defaultChecked />
+export const Checked = {
+  render: () => <Switch defaultChecked />,
 }
 
-function DisabledSwitch() {
-  return <Switch disabled />
+export const Disabled = {
+  render: () => <Switch disabled />,
 }
 
-function DisabledCheckedSwitch() {
-  return <Switch disabled defaultChecked />
+export const DisabledChecked = {
+  render: () => <Switch disabled defaultChecked />,
 }
 
 // Component that uses hooks
@@ -58,27 +58,6 @@ function ControlledSwitchDemo() {
   )
 }
 
-// Export components directly
-export const Default = {
-  component: DefaultSwitch,
-}
-
-export const WithLabel = {
-  component: SwitchWithLabel,
-}
-
-export const Checked = {
-  component: CheckedSwitch,
-}
-
-export const Disabled = {
-  component: DisabledSwitch,
-}
-
-export const DisabledChecked = {
-  component: DisabledCheckedSwitch,
-}
-
 export const Controlled = {
-  component: ControlledSwitchDemo,
+  render: () => <ControlledSwitchDemo />,
 }

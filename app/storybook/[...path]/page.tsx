@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft } from "lucide-react"
+import { notFound } from "next/navigation"
 
 // Create a mapping of component paths to their stories
 const storyMap = {
@@ -16,10 +17,8 @@ const storyMap = {
     "avatar",
     "badge",
     "button",
-    "calendar",
     "card",
     "checkbox",
-    "command",
     "dialog",
     "dropdown-menu",
     "hover-card",
@@ -53,10 +52,8 @@ const storyImports = {
     avatar: () => import("../../../stories/ui/avatar.stories"),
     badge: () => import("../../../stories/ui/badge.stories"),
     button: () => import("../../../stories/ui/button.stories"),
-    calendar: () => import("../../../stories/ui/calendar.stories"),
     card: () => import("../../../stories/ui/card.stories"),
     checkbox: () => import("../../../stories/ui/checkbox.stories"),
-    command: () => import("../../../stories/ui/command.stories"),
     dialog: () => import("../../../stories/ui/dialog.stories"),
     "dropdown-menu": () => import("../../../stories/ui/dropdown-menu.stories"),
     "hover-card": () => import("../../../stories/ui/hover-card.stories"),
@@ -119,7 +116,7 @@ export default function StoryPage() {
     async function loadStory() {
       if (!params?.path || !Array.isArray(params.path) || params.path.length < 2) {
         setIsLoading(false)
-        return
+        return notFound()
       }
 
       const [category, component, variant = "Default"] = params.path
@@ -129,9 +126,7 @@ export default function StoryPage() {
         !storyMap[category as keyof typeof storyMap] ||
         !storyMap[category as keyof typeof storyMap].includes(component)
       ) {
-        setError("Story not found")
-        setIsLoading(false)
-        return
+        return notFound()
       }
 
       try {
@@ -158,14 +153,14 @@ export default function StoryPage() {
         // Set the story title
         setStoryTitle(`${category}/${component}`)
 
-        // Check if the story has a component property (for stories that use React components)
-        if (storyModule[selectedVariant]?.component) {
-          setStoryComponent(() => () => storyModule[selectedVariant].component)
-        }
-        // Otherwise, check if it has a render function
-        else if (storyModule[selectedVariant]?.render) {
+        // Check if the story has a render function
+        if (storyModule[selectedVariant]?.render) {
           // Create a component from the render function
-          setStoryComponent(() => () => storyModule[selectedVariant].render(storyModule[selectedVariant].args || {}))
+          setStoryComponent(() => () => storyModule[selectedVariant].render())
+        }
+        // Otherwise, check if it has a component property
+        else if (storyModule[selectedVariant]?.component) {
+          setStoryComponent(() => storyModule[selectedVariant].component)
         } else {
           setError("Story variant does not have a component or render function")
         }

@@ -81,5 +81,5 @@ function ContextMenuDemo() {
 }
 
 export const Default = {
-  component: ContextMenuDemo,
+  render: () => <ContextMenuDemo />,
 }

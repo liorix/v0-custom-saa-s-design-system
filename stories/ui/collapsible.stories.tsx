@@ -43,5 +43,5 @@ function CollapsibleDemo() {
 }
 
 export const Default = {
-  component: CollapsibleDemo,
+  render: () => <CollapsibleDemo />,
 }
