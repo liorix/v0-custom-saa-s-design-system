@@ -17,12 +17,12 @@ export default meta
 type Story = StoryObj<typeof Calendar>
 
 // Create proper React components for each calendar demo
-const DefaultCalendarDemo = () => {
+function DefaultCalendarDemo() {
   const [date, setDate] = React.useState<Date | undefined>(new Date())
   return <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md border" />
 }
 
-const DateRangeCalendarDemo = () => {
+function DateRangeCalendarDemo() {
   const [date, setDate] = React.useState<{
     from: Date | undefined
     to: Date | undefined
@@ -33,7 +33,7 @@ const DateRangeCalendarDemo = () => {
   return <Calendar mode="range" selected={date} onSelect={setDate} className="rounded-md border" />
 }
 
-const MultipleCalendarDemo = () => {
+function MultipleCalendarDemo() {
   const [dates, setDates] = React.useState<Date[] | undefined>([
     new Date(),
     new Date(new Date().setDate(new Date().getDate() + 2)),
@@ -42,14 +42,15 @@ const MultipleCalendarDemo = () => {
   return <Calendar mode="multiple" selected={dates} onSelect={setDates} className="rounded-md border" />
 }
 
-export const Default: Story = {
-  render: () => <DefaultCalendarDemo />,
+// Export components directly
+export const Default = {
+  component: DefaultCalendarDemo,
 }
 
-export const DateRange: Story = {
-  render: () => <DateRangeCalendarDemo />,
+export const DateRange = {
+  component: DateRangeCalendarDemo,
 }
 
-export const Multiple: Story = {
-  render: () => <MultipleCalendarDemo />,
+export const Multiple = {
+  component: MultipleCalendarDemo,
 }

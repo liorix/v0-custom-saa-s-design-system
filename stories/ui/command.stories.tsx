@@ -28,8 +28,9 @@ const meta: Meta<typeof Command> = {
 export default meta
 type Story = StoryObj<typeof Command>
 
-export const Default: Story = {
-  render: () => (
+// Simple component that doesn't use hooks
+function DefaultCommand() {
+  return (
     <Command className="rounded-lg border shadow-md w-[400px]">
       <CommandInput placeholder="Type a command or search..." />
       <CommandList>
@@ -63,11 +64,11 @@ export const Default: Story = {
         </CommandGroup>
       </CommandList>
     </Command>
-  ),
+  )
 }
 
-// Create a proper React component for the command dialog demo
-const CommandDialogDemo = () => {
+// Component that uses hooks
+function CommandDialogDemo() {
   const [open, setOpen] = React.useState(false)
 
   return (
@@ -113,6 +114,11 @@ const CommandDialogDemo = () => {
   )
 }
 
-export const CommandDialogExample: Story = {
-  render: () => <CommandDialogDemo />,
+// Export components directly
+export const Default = {
+  component: DefaultCommand,
+}
+
+export const CommandDialogExample = {
+  component: CommandDialogDemo,
 }

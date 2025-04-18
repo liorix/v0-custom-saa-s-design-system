@@ -27,10 +27,11 @@ const meta: Meta<typeof Toast> = {
 export default meta
 type Story = StoryObj<typeof Toast>
 
-export const Default: Story = {
-  render: (args) => (
+// Simple components that don't use hooks
+function DefaultToast() {
+  return (
     <ToastProvider>
-      <Toast {...args}>
+      <Toast variant="default">
         <div className="grid gap-1">
           <ToastTitle>Title</ToastTitle>
           <ToastDescription>Description</ToastDescription>
@@ -39,16 +40,13 @@ export const Default: Story = {
       </Toast>
       <ToastViewport />
     </ToastProvider>
-  ),
-  args: {
-    variant: "default",
-  },
+  )
 }
 
-export const WithAction: Story = {
-  render: (args) => (
+function ToastWithAction() {
+  return (
     <ToastProvider>
-      <Toast {...args}>
+      <Toast variant="default">
         <div className="grid gap-1">
           <ToastTitle>Title</ToastTitle>
           <ToastDescription>Description</ToastDescription>
@@ -58,16 +56,13 @@ export const WithAction: Story = {
       </Toast>
       <ToastViewport />
     </ToastProvider>
-  ),
-  args: {
-    variant: "default",
-  },
+  )
 }
 
-export const Destructive: Story = {
-  render: (args) => (
+function DestructiveToast() {
+  return (
     <ToastProvider>
-      <Toast {...args}>
+      <Toast variant="destructive">
         <div className="grid gap-1">
           <ToastTitle>Error</ToastTitle>
           <ToastDescription>Something went wrong.</ToastDescription>
@@ -77,14 +72,11 @@ export const Destructive: Story = {
       </Toast>
       <ToastViewport />
     </ToastProvider>
-  ),
-  args: {
-    variant: "destructive",
-  },
+  )
 }
 
-// Create a proper React component for the toast demo
-const ToastDemo = () => {
+// Component that uses hooks
+function ToastDemo() {
   const { toast } = useToast()
 
   return (
@@ -103,6 +95,19 @@ const ToastDemo = () => {
   )
 }
 
-export const UseToastHook: Story = {
-  render: () => <ToastDemo />,
+// Export components directly
+export const Default = {
+  component: DefaultToast,
+}
+
+export const WithAction = {
+  component: ToastWithAction,
+}
+
+export const Destructive = {
+  component: DestructiveToast,
+}
+
+export const UseToastHook = {
+  component: ToastDemo,
 }

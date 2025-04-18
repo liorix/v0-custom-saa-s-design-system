@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
@@ -9,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft } from "lucide-react"
 
 // Create a mapping of component paths to their stories
-// Instead of importing all stories at once, we'll dynamically import them when needed
 const storyMap = {
   ui: [
     "accordion",
@@ -49,67 +47,73 @@ const storyMap = {
 // Create a mapping of dynamic imports for each story
 const storyImports = {
   ui: {
-    accordion: () => import("../../../stories/ui/accordion.stories.tsx"),
-    alert: () => import("../../../stories/ui/alert.stories.tsx"),
-    "alert-dialog": () => import("../../../stories/ui/alert-dialog.stories.tsx"),
-    avatar: () => import("../../../stories/ui/avatar.stories.tsx"),
-    badge: () => import("../../../stories/ui/badge.stories.tsx"),
-    button: () => import("../../../stories/ui/button.stories.tsx"),
-    calendar: () => import("../../../stories/ui/calendar.stories.tsx"),
-    card: () => import("../../../stories/ui/card.stories.tsx"),
-    checkbox: () => import("../../../stories/ui/checkbox.stories.tsx"),
-    command: () => import("../../../stories/ui/command.stories.tsx"),
-    dialog: () => import("../../../stories/ui/dialog.stories.tsx"),
-    "dropdown-menu": () => import("../../../stories/ui/dropdown-menu.stories.tsx"),
-    "hover-card": () => import("../../../stories/ui/hover-card.stories.tsx"),
-    input: () => import("../../../stories/ui/input.stories.tsx"),
-    label: () => import("../../../stories/ui/label.stories.tsx"),
-    popover: () => import("../../../stories/ui/popover.stories.tsx"),
-    select: () => import("../../../stories/ui/select.stories.tsx"),
-    separator: () => import("../../../stories/ui/separator.stories.tsx"),
-    sheet: () => import("../../../stories/ui/sheet.stories.tsx"),
-    skeleton: () => import("../../../stories/ui/skeleton.stories.tsx"),
-    slider: () => import("../../../stories/ui/slider.stories.tsx"),
-    switch: () => import("../../../stories/ui/switch.stories.tsx"),
-    tabs: () => import("../../../stories/ui/tabs.stories.tsx"),
-    textarea: () => import("../../../stories/ui/textarea.stories.tsx"),
-    toast: () => import("../../../stories/ui/toast.stories.tsx"),
-    collapsible: () => import("../../../stories/ui/collapsible.stories.tsx"),
-    "context-menu": () => import("../../../stories/ui/context-menu.stories.tsx"),
+    accordion: () => import("../../../stories/ui/accordion.stories"),
+    alert: () => import("../../../stories/ui/alert.stories"),
+    "alert-dialog": () => import("../../../stories/ui/alert-dialog.stories"),
+    avatar: () => import("../../../stories/ui/avatar.stories"),
+    badge: () => import("../../../stories/ui/badge.stories"),
+    button: () => import("../../../stories/ui/button.stories"),
+    calendar: () => import("../../../stories/ui/calendar.stories"),
+    card: () => import("../../../stories/ui/card.stories"),
+    checkbox: () => import("../../../stories/ui/checkbox.stories"),
+    command: () => import("../../../stories/ui/command.stories"),
+    dialog: () => import("../../../stories/ui/dialog.stories"),
+    "dropdown-menu": () => import("../../../stories/ui/dropdown-menu.stories"),
+    "hover-card": () => import("../../../stories/ui/hover-card.stories"),
+    input: () => import("../../../stories/ui/input.stories"),
+    label: () => import("../../../stories/ui/label.stories"),
+    popover: () => import("../../../stories/ui/popover.stories"),
+    select: () => import("../../../stories/ui/select.stories"),
+    separator: () => import("../../../stories/ui/separator.stories"),
+    sheet: () => import("../../../stories/ui/sheet.stories"),
+    skeleton: () => import("../../../stories/ui/skeleton.stories"),
+    slider: () => import("../../../stories/ui/slider.stories"),
+    switch: () => import("../../../stories/ui/switch.stories"),
+    tabs: () => import("../../../stories/ui/tabs.stories"),
+    textarea: () => import("../../../stories/ui/textarea.stories"),
+    toast: () => import("../../../stories/ui/toast.stories"),
+    collapsible: () => import("../../../stories/ui/collapsible.stories"),
+    "context-menu": () => import("../../../stories/ui/context-menu.stories"),
   },
   atoms: {
-    logo: () => import("../../../stories/atoms/logo.stories.tsx"),
-    "empty-state": () => import("../../../stories/atoms/empty-state.stories.tsx"),
-    "avatar-group": () => import("../../../stories/atoms/avatar-group.stories.tsx"),
-    "page-header": () => import("../../../stories/atoms/page-header.stories.tsx"),
+    logo: () => import("../../../stories/atoms/logo.stories"),
+    "empty-state": () => import("../../../stories/atoms/empty-state.stories"),
+    "avatar-group": () => import("../../../stories/atoms/avatar-group.stories"),
+    "page-header": () => import("../../../stories/atoms/page-header.stories"),
   },
   molecules: {
-    "stat-card": () => import("../../../stories/molecules/stat-card.stories.tsx"),
-    "notification-item": () => import("../../../stories/molecules/notification-item.stories.tsx"),
-    "feature-card": () => import("../../../stories/molecules/feature-card.stories.tsx"),
-    "form-field": () => import("../../../stories/molecules/form-field.stories.tsx"),
+    "stat-card": () => import("../../../stories/molecules/stat-card.stories"),
+    "notification-item": () => import("../../../stories/molecules/notification-item.stories"),
+    "feature-card": () => import("../../../stories/molecules/feature-card.stories"),
+    "form-field": () => import("../../../stories/molecules/form-field.stories"),
   },
   organisms: {
-    "organization-switcher": () => import("../../../stories/organisms/organization-switcher.stories.tsx"),
-    "data-table": () => import("../../../stories/organisms/data-table.stories.tsx"),
-    "billing-plan-card": () => import("../../../stories/organisms/billing-plan-card.stories.tsx"),
-    "team-members-list": () => import("../../../stories/organisms/team-members-list.stories.tsx"),
-    "auth-form": () => import("../../../stories/organisms/auth-form.stories.tsx"),
+    "organization-switcher": () => import("../../../stories/organisms/organization-switcher.stories"),
+    "data-table": () => import("../../../stories/organisms/data-table.stories"),
+    "billing-plan-card": () => import("../../../stories/organisms/billing-plan-card.stories"),
+    "team-members-list": () => import("../../../stories/organisms/team-members-list.stories"),
+    "auth-form": () => import("../../../stories/organisms/auth-form.stories"),
   },
   templates: {
-    "auth-layout": () => import("../../../stories/templates/auth-layout.stories.tsx"),
-    "dashboard-layout": () => import("../../../stories/templates/dashboard-layout.stories.tsx"),
+    "auth-layout": () => import("../../../stories/templates/auth-layout.stories"),
+    "dashboard-layout": () => import("../../../stories/templates/dashboard-layout.stories"),
   },
+}
+
+// Create a component to safely render stories
+function StoryRenderer({ Story }: { Story: React.ComponentType<any> }) {
+  return <Story />
 }
 
 export default function StoryPage() {
   const params = useParams()
   const router = useRouter()
-  const [story, setStory] = useState<React.ReactNode | null>(null)
+  const [storyComponent, setStoryComponent] = useState<React.ComponentType<any> | null>(null)
   const [storyTitle, setStoryTitle] = useState("")
   const [storyVariant, setStoryVariant] = useState("")
   const [availableVariants, setAvailableVariants] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function loadStory() {
@@ -125,7 +129,7 @@ export default function StoryPage() {
         !storyMap[category as keyof typeof storyMap] ||
         !storyMap[category as keyof typeof storyMap].includes(component)
       ) {
-        setStory(<div>Story not found</div>)
+        setError("Story not found")
         setIsLoading(false)
         return
       }
@@ -154,23 +158,27 @@ export default function StoryPage() {
         // Set the story title
         setStoryTitle(`${category}/${component}`)
 
-        // Render the selected story
-        if (storyModule[selectedVariant]?.render) {
-          // Create a wrapper component to safely render the story
-          const StoryComponent = storyModule[selectedVariant].render(storyModule[selectedVariant].args || {})
-          setStory(StoryComponent)
+        // Check if the story has a component property (for stories that use React components)
+        if (storyModule[selectedVariant]?.component) {
+          setStoryComponent(() => () => storyModule[selectedVariant].component)
+        }
+        // Otherwise, check if it has a render function
+        else if (storyModule[selectedVariant]?.render) {
+          // Create a component from the render function
+          setStoryComponent(() => () => storyModule[selectedVariant].render(storyModule[selectedVariant].args || {}))
         } else {
-          setStory(<div>Variant not found</div>)
+          setError("Story variant does not have a component or render function")
         }
       } catch (error) {
         console.error("Error loading story:", error)
-        setStory(<div>Error loading story: {error instanceof Error ? error.message : String(error)}</div>)
+        setError(`Error loading story: ${error instanceof Error ? error.message : String(error)}`)
       }
 
       setIsLoading(false)
     }
 
     setIsLoading(true)
+    setError(null)
     loadStory()
   }, [params])
 
@@ -216,7 +224,15 @@ export default function StoryPage() {
           </div>
         </div>
       )}
-      <div className="p-4 border rounded-lg bg-background">{story}</div>
+      <div className="p-4 border rounded-lg bg-background">
+        {error ? (
+          <div className="text-red-500">{error}</div>
+        ) : storyComponent ? (
+          <StoryRenderer Story={storyComponent} />
+        ) : (
+          <div>No story component found</div>
+        )}
+      </div>
     </div>
   )
 }

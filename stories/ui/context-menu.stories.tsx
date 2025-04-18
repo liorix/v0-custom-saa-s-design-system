@@ -1,5 +1,4 @@
 "use client"
-
 import type { Meta, StoryObj } from "@storybook/react"
 import {
   ContextMenu,
@@ -30,7 +29,7 @@ export default meta
 type Story = StoryObj<typeof ContextMenu>
 
 // Create a proper React component for the context menu demo
-const ContextMenuDemo = () => {
+function ContextMenuDemo() {
   return (
     <ContextMenu>
       <ContextMenuTrigger className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm">
@@ -80,6 +79,7 @@ const ContextMenuDemo = () => {
   )
 }
 
-export const Default: Story = {
-  render: () => <ContextMenuDemo />,
+// Export component directly
+export const Default = {
+  component: ContextMenuDemo,
 }
