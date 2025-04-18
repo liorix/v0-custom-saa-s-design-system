@@ -46,6 +46,62 @@ const storyMap = {
   templates: ["auth-layout", "dashboard-layout"],
 }
 
+// Create a mapping of dynamic imports for each story
+const storyImports = {
+  ui: {
+    accordion: () => import("../../../stories/ui/accordion.stories.tsx"),
+    alert: () => import("../../../stories/ui/alert.stories.tsx"),
+    "alert-dialog": () => import("../../../stories/ui/alert-dialog.stories.tsx"),
+    avatar: () => import("../../../stories/ui/avatar.stories.tsx"),
+    badge: () => import("../../../stories/ui/badge.stories.tsx"),
+    button: () => import("../../../stories/ui/button.stories.tsx"),
+    calendar: () => import("../../../stories/ui/calendar.stories.tsx"),
+    card: () => import("../../../stories/ui/card.stories.tsx"),
+    checkbox: () => import("../../../stories/ui/checkbox.stories.tsx"),
+    command: () => import("../../../stories/ui/command.stories.tsx"),
+    dialog: () => import("../../../stories/ui/dialog.stories.tsx"),
+    "dropdown-menu": () => import("../../../stories/ui/dropdown-menu.stories.tsx"),
+    "hover-card": () => import("../../../stories/ui/hover-card.stories.tsx"),
+    input: () => import("../../../stories/ui/input.stories.tsx"),
+    label: () => import("../../../stories/ui/label.stories.tsx"),
+    popover: () => import("../../../stories/ui/popover.stories.tsx"),
+    select: () => import("../../../stories/ui/select.stories.tsx"),
+    separator: () => import("../../../stories/ui/separator.stories.tsx"),
+    sheet: () => import("../../../stories/ui/sheet.stories.tsx"),
+    skeleton: () => import("../../../stories/ui/skeleton.stories.tsx"),
+    slider: () => import("../../../stories/ui/slider.stories.tsx"),
+    switch: () => import("../../../stories/ui/switch.stories.tsx"),
+    tabs: () => import("../../../stories/ui/tabs.stories.tsx"),
+    textarea: () => import("../../../stories/ui/textarea.stories.tsx"),
+    toast: () => import("../../../stories/ui/toast.stories.tsx"),
+    collapsible: () => import("../../../stories/ui/collapsible.stories.tsx"),
+    "context-menu": () => import("../../../stories/ui/context-menu.stories.tsx"),
+  },
+  atoms: {
+    logo: () => import("../../../stories/atoms/logo.stories.tsx"),
+    "empty-state": () => import("../../../stories/atoms/empty-state.stories.tsx"),
+    "avatar-group": () => import("../../../stories/atoms/avatar-group.stories.tsx"),
+    "page-header": () => import("../../../stories/atoms/page-header.stories.tsx"),
+  },
+  molecules: {
+    "stat-card": () => import("../../../stories/molecules/stat-card.stories.tsx"),
+    "notification-item": () => import("../../../stories/molecules/notification-item.stories.tsx"),
+    "feature-card": () => import("../../../stories/molecules/feature-card.stories.tsx"),
+    "form-field": () => import("../../../stories/molecules/form-field.stories.tsx"),
+  },
+  organisms: {
+    "organization-switcher": () => import("../../../stories/organisms/organization-switcher.stories.tsx"),
+    "data-table": () => import("../../../stories/organisms/data-table.stories.tsx"),
+    "billing-plan-card": () => import("../../../stories/organisms/billing-plan-card.stories.tsx"),
+    "team-members-list": () => import("../../../stories/organisms/team-members-list.stories.tsx"),
+    "auth-form": () => import("../../../stories/organisms/auth-form.stories.tsx"),
+  },
+  templates: {
+    "auth-layout": () => import("../../../stories/templates/auth-layout.stories.tsx"),
+    "dashboard-layout": () => import("../../../stories/templates/dashboard-layout.stories.tsx"),
+  },
+}
+
 export default function StoryPage() {
   const params = useParams()
   const router = useRouter()
@@ -75,8 +131,14 @@ export default function StoryPage() {
       }
 
       try {
-        // Dynamically import the story file
-        const storyModule = await import(`@/stories/${category}/${component}.stories`)
+        // Use the explicit import function from our mapping
+        const importFn = storyImports[category as keyof typeof storyImports]?.[component as any]
+
+        if (!importFn) {
+          throw new Error(`Import function not found for ${category}/${component}`)
+        }
+
+        const storyModule = await importFn()
 
         // Get all available story variants
         const variants = Object.keys(storyModule).filter(
@@ -101,7 +163,7 @@ export default function StoryPage() {
         }
       } catch (error) {
         console.error("Error loading story:", error)
-        setStory(<div>Error loading story</div>)
+        setStory(<div>Error loading story: {error instanceof Error ? error.message : String(error)}</div>)
       }
 
       setIsLoading(false)
