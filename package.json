@@ -32,7 +32,7 @@
     "@radix-ui/react-slider": "^1.2.2",
     "@radix-ui/react-slot": "^1.1.1",
     "@radix-ui/react-switch": "^1.1.2",
-    "@radix-ui/react-tabs": "^1.1.2",
+    "@radix-ui/react-tabs": "latest",
     "@radix-ui/react-toast": "^1.2.4",
     "@radix-ui/react-toggle": "^1.1.1",
     "@radix-ui/react-toggle-group": "^1.1.1",
@@ -58,7 +58,16 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.6",
     "zod": "latest",
-    "@tanstack/react-table": "latest"
+    "webpack": "latest",
+    "storybook": "latest",
+    "@storybook/test": "latest",
+    "@tanstack/react-table": "latest",
+    "@storybook/nextjs": "latest",
+    "@storybook/react": "latest",
+    "@storybook/addon-themes": "latest",
+    "child_process": "latest",
+    "fs-extra": "latest",
+    "path": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

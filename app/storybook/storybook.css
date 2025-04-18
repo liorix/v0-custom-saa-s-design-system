@@ -1,0 +1,13 @@
+.preview-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 200px;
+}
+
+/* For form components */
+.preview-container form {
+  width: 100%;
+  max-width: 400px;
+}

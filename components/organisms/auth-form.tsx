@@ -60,7 +60,7 @@ export function AuthForm({ type, onSubmit, className }: AuthFormProps) {
       <form onSubmit={form.handleSubmit(handleSubmit)} className={cn("space-y-4", className)}>
         {type === "signup" && (
           <FormInputField
-            control={form.control as any}
+            control={form.control}
             name="name"
             label="Name"
             placeholder="Enter your name"
@@ -68,7 +68,7 @@ export function AuthForm({ type, onSubmit, className }: AuthFormProps) {
           />
         )}
         <FormInputField
-          control={form.control as any}
+          control={form.control}
           name="email"
           label="Email"
           placeholder="Enter your email"
@@ -76,7 +76,7 @@ export function AuthForm({ type, onSubmit, className }: AuthFormProps) {
           disabled={isLoading}
         />
         <FormInputField
-          control={form.control as any}
+          control={form.control}
           name="password"
           label="Password"
           placeholder="Enter your password"
@@ -85,7 +85,7 @@ export function AuthForm({ type, onSubmit, className }: AuthFormProps) {
         />
         {type === "signup" && (
           <FormInputField
-            control={form.control as any}
+            control={form.control}
             name="confirmPassword"
             label="Confirm Password"
             placeholder="Confirm your password"

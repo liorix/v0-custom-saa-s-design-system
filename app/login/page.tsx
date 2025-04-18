@@ -9,8 +9,15 @@ import Link from "next/link"
 
 export default function LoginPage() {
   const handleLogin = async (values: any) => {
-    // Handle login logic here
-    console.log("Login values:", values)
+    try {
+      // Handle login logic here
+      console.log("Login values:", values)
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      // You would typically redirect here after successful login
+    } catch (error) {
+      console.error("Login error:", error)
+    }
   }
 
   return (
