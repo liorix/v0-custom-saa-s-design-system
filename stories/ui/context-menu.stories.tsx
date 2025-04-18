@@ -29,8 +29,9 @@ const meta: Meta<typeof ContextMenu> = {
 export default meta
 type Story = StoryObj<typeof ContextMenu>
 
-export const Default: Story = {
-  render: () => (
+// Create a proper React component for the context menu demo
+const ContextMenuDemo = () => {
+  return (
     <ContextMenu>
       <ContextMenuTrigger className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm">
         Right click here
@@ -76,5 +77,9 @@ export const Default: Story = {
         </ContextMenuRadioGroup>
       </ContextMenuContent>
     </ContextMenu>
-  ),
+  )
+}
+
+export const Default: Story = {
+  render: () => <ContextMenuDemo />,
 }

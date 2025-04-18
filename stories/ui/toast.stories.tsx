@@ -83,6 +83,7 @@ export const Destructive: Story = {
   },
 }
 
+// Create a proper React component for the toast demo
 const ToastDemo = () => {
   const { toast } = useToast()
 

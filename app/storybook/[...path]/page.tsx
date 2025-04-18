@@ -156,6 +156,7 @@ export default function StoryPage() {
 
         // Render the selected story
         if (storyModule[selectedVariant]?.render) {
+          // Create a wrapper component to safely render the story
           const StoryComponent = storyModule[selectedVariant].render(storyModule[selectedVariant].args || {})
           setStory(StoryComponent)
         } else {

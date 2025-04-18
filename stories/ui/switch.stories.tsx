@@ -1,9 +1,9 @@
 "use client"
 
+import React from "react"
 import type { Meta, StoryObj } from "@storybook/react"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { useState } from "react"
 
 const meta: Meta<typeof Switch> = {
   title: "UI/Switch",
@@ -42,17 +42,21 @@ export const DisabledChecked: Story = {
   render: () => <Switch disabled defaultChecked />,
 }
 
-export const Controlled: Story = {
-  render: () => {
-    const [checked, setChecked] = useState(false)
-    return (
-      <div className="flex flex-col space-y-4">
-        <div className="flex items-center space-x-2">
-          <Switch id="controlled" checked={checked} onCheckedChange={setChecked} />
-          <Label htmlFor="controlled">{checked ? "Enabled" : "Disabled"}</Label>
-        </div>
-        <p className="text-sm text-muted-foreground">The switch is {checked ? "on" : "off"}.</p>
+// Create a proper React component for the controlled switch demo
+const ControlledSwitchDemo = () => {
+  const [checked, setChecked] = React.useState(false)
+
+  return (
+    <div className="flex flex-col space-y-4">
+      <div className="flex items-center space-x-2">
+        <Switch id="controlled" checked={checked} onCheckedChange={setChecked} />
+        <Label htmlFor="controlled">{checked ? "Enabled" : "Disabled"}</Label>
       </div>
-    )
-  },
+      <p className="text-sm text-muted-foreground">The switch is {checked ? "on" : "off"}.</p>
+    </div>
+  )
+}
+
+export const Controlled: Story = {
+  render: () => <ControlledSwitchDemo />,
 }

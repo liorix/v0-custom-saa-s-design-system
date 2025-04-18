@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import type { Meta, StoryObj } from "@storybook/react"
 import {
   Command,
@@ -12,7 +13,6 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command"
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { CalendarIcon, FileIcon, LaptopIcon, MoonIcon, SunIcon } from "lucide-react"
 
@@ -66,51 +66,53 @@ export const Default: Story = {
   ),
 }
 
-export const CommandDialogExample: Story = {
-  render: () => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [open, setOpen] = useState(false)
+// Create a proper React component for the command dialog demo
+const CommandDialogDemo = () => {
+  const [open, setOpen] = React.useState(false)
 
-    return (
-      <>
-        <Button onClick={() => setOpen(true)} className="flex items-center">
-          Open Command Menu
-          <div className="ml-2 text-xs bg-muted px-1.5 py-0.5 rounded">⌘K</div>
-        </Button>
-        <CommandDialog open={open} onOpenChange={setOpen}>
-          <CommandInput placeholder="Type a command or search..." />
-          <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Suggestions">
-              <CommandItem>
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                <span>Calendar</span>
-              </CommandItem>
-              <CommandItem>
-                <FileIcon className="mr-2 h-4 w-4" />
-                <span>Documents</span>
-                <CommandShortcut>⌘D</CommandShortcut>
-              </CommandItem>
-              <CommandItem>
-                <LaptopIcon className="mr-2 h-4 w-4" />
-                <span>System</span>
-                <CommandShortcut>⌘S</CommandShortcut>
-              </CommandItem>
-            </CommandGroup>
-            <CommandSeparator />
-            <CommandGroup heading="Settings">
-              <CommandItem>
-                <SunIcon className="mr-2 h-4 w-4" />
-                <span>Light Mode</span>
-              </CommandItem>
-              <CommandItem>
-                <MoonIcon className="mr-2 h-4 w-4" />
-                <span>Dark Mode</span>
-              </CommandItem>
-            </CommandGroup>
-          </CommandList>
-        </CommandDialog>
-      </>
-    )
-  },
+  return (
+    <>
+      <Button onClick={() => setOpen(true)} className="flex items-center">
+        Open Command Menu
+        <div className="ml-2 text-xs bg-muted px-1.5 py-0.5 rounded">⌘K</div>
+      </Button>
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandInput placeholder="Type a command or search..." />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Suggestions">
+            <CommandItem>
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              <span>Calendar</span>
+            </CommandItem>
+            <CommandItem>
+              <FileIcon className="mr-2 h-4 w-4" />
+              <span>Documents</span>
+              <CommandShortcut>⌘D</CommandShortcut>
+            </CommandItem>
+            <CommandItem>
+              <LaptopIcon className="mr-2 h-4 w-4" />
+              <span>System</span>
+              <CommandShortcut>⌘S</CommandShortcut>
+            </CommandItem>
+          </CommandGroup>
+          <CommandSeparator />
+          <CommandGroup heading="Settings">
+            <CommandItem>
+              <SunIcon className="mr-2 h-4 w-4" />
+              <span>Light Mode</span>
+            </CommandItem>
+            <CommandItem>
+              <MoonIcon className="mr-2 h-4 w-4" />
+              <span>Dark Mode</span>
+            </CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
+    </>
+  )
+}
+
+export const CommandDialogExample: Story = {
+  render: () => <CommandDialogDemo />,
 }
