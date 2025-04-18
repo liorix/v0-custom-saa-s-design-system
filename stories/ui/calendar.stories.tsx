@@ -16,7 +16,6 @@ const meta: Meta<typeof Calendar> = {
 export default meta
 type Story = StoryObj<typeof Calendar>
 
-// Create proper React components for each calendar demo
 function DefaultCalendarDemo() {
   const [date, setDate] = React.useState<Date | undefined>(new Date())
   return <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md border" />
@@ -42,7 +41,6 @@ function MultipleCalendarDemo() {
   return <Calendar mode="multiple" selected={dates} onSelect={setDates} className="rounded-md border" />
 }
 
-// Export components with render function
 export const Default = {
   render: () => <DefaultCalendarDemo />,
 }

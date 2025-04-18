@@ -18,7 +18,6 @@ const meta: Meta<typeof Collapsible> = {
 export default meta
 type Story = StoryObj<typeof Collapsible>
 
-// Create a proper React component for the collapsible demo
 function CollapsibleDemo() {
   const [isOpen, setIsOpen] = React.useState(false)
 

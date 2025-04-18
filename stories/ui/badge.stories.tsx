@@ -13,24 +13,23 @@ const meta: Meta<typeof Badge> = {
 export default meta
 type Story = StoryObj<typeof Badge>
 
-// Change from args to render pattern for consistency
-export const Default: Story = {
+export const Default = {
   render: () => <Badge>Badge</Badge>,
 }
 
-export const Secondary: Story = {
+export const Secondary = {
   render: () => <Badge variant="secondary">Secondary</Badge>,
 }
 
-export const Destructive: Story = {
+export const Destructive = {
   render: () => <Badge variant="destructive">Destructive</Badge>,
 }
 
-export const Outline: Story = {
+export const Outline = {
   render: () => <Badge variant="outline">Outline</Badge>,
 }
 
-export const WithDot: Story = {
+export const WithDot = {
   render: () => (
     <Badge>
       <span className="mr-1 h-2 w-2 rounded-full bg-primary-foreground" />

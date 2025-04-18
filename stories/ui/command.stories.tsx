@@ -1,4 +1,5 @@
 "use client"
+
 import * as React from "react"
 import type { Meta, StoryObj } from "@storybook/react"
 import {
@@ -27,7 +28,6 @@ const meta: Meta<typeof Command> = {
 export default meta
 type Story = StoryObj<typeof Command>
 
-// Simple component that doesn't use hooks
 function DefaultCommand() {
   return (
     <Command className="rounded-lg border shadow-md w-[400px]">
@@ -66,7 +66,6 @@ function DefaultCommand() {
   )
 }
 
-// Component that uses hooks
 function CommandDialogDemo() {
   const [open, setOpen] = React.useState(false)
 
@@ -113,7 +112,6 @@ function CommandDialogDemo() {
   )
 }
 
-// Export components with render function
 export const Default = {
   render: () => <DefaultCommand />,
 }

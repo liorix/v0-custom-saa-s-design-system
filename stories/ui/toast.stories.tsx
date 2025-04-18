@@ -28,11 +28,10 @@ const meta: Meta<typeof Toast> = {
 export default meta
 type Story = StoryObj<typeof Toast>
 
-// Simple components that don't use hooks
 function DefaultToast() {
   return (
     <ToastProvider>
-      <Toast variant="default">
+      <Toast>
         <div className="grid gap-1">
           <ToastTitle>Title</ToastTitle>
           <ToastDescription>Description</ToastDescription>
@@ -47,7 +46,7 @@ function DefaultToast() {
 function ToastWithAction() {
   return (
     <ToastProvider>
-      <Toast variant="default">
+      <Toast>
         <div className="grid gap-1">
           <ToastTitle>Title</ToastTitle>
           <ToastDescription>Description</ToastDescription>
@@ -76,7 +75,6 @@ function DestructiveToast() {
   )
 }
 
-// Component that uses hooks
 function ToastDemo() {
   const { toast } = useToast()
 
@@ -96,7 +94,6 @@ function ToastDemo() {
   )
 }
 
-// Export components with render function
 export const Default = {
   render: () => <DefaultToast />,
 }

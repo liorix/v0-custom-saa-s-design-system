@@ -29,7 +29,6 @@ const meta: Meta<typeof ContextMenu> = {
 export default meta
 type Story = StoryObj<typeof ContextMenu>
 
-// Create a proper React component for the context menu demo
 function ContextMenuDemo() {
   return (
     <ContextMenu>

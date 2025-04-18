@@ -1,12 +1,11 @@
 "use client"
 
 import type React from "react"
+
 import { useEffect, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ChevronLeft } from "lucide-react"
-import { notFound } from "next/navigation"
+import { useParams, notFound } from "next/navigation"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // Create a mapping of component paths to their stories
 const storyMap = {
@@ -17,6 +16,7 @@ const storyMap = {
     "avatar",
     "badge",
     "button",
+    "calendar",
     "card",
     "checkbox",
     "dialog",
@@ -36,6 +36,7 @@ const storyMap = {
     "toast",
     "collapsible",
     "context-menu",
+    "command",
   ],
   atoms: ["logo", "empty-state", "avatar-group", "page-header"],
   molecules: ["stat-card", "notification-item", "feature-card", "form-field"],
@@ -52,6 +53,7 @@ const storyImports = {
     avatar: () => import("../../../stories/ui/avatar.stories"),
     badge: () => import("../../../stories/ui/badge.stories"),
     button: () => import("../../../stories/ui/button.stories"),
+    calendar: () => import("../../../stories/ui/calendar.stories"),
     card: () => import("../../../stories/ui/card.stories"),
     checkbox: () => import("../../../stories/ui/checkbox.stories"),
     dialog: () => import("../../../stories/ui/dialog.stories"),
@@ -71,6 +73,7 @@ const storyImports = {
     toast: () => import("../../../stories/ui/toast.stories"),
     collapsible: () => import("../../../stories/ui/collapsible.stories"),
     "context-menu": () => import("../../../stories/ui/context-menu.stories"),
+    command: () => import("../../../stories/ui/command.stories"),
   },
   atoms: {
     logo: () => import("../../../stories/atoms/logo.stories"),
@@ -104,7 +107,6 @@ function StoryRenderer({ Story }: { Story: React.ComponentType<any> }) {
 
 export default function StoryPage() {
   const params = useParams()
-  const router = useRouter()
   const [storyComponent, setStoryComponent] = useState<React.ComponentType<any> | null>(null)
   const [storyTitle, setStoryTitle] = useState("")
   const [storyVariant, setStoryVariant] = useState("")
@@ -151,7 +153,7 @@ export default function StoryPage() {
         setStoryVariant(selectedVariant)
 
         // Set the story title
-        setStoryTitle(`${category}/${component}`)
+        setStoryTitle(`${component.charAt(0).toUpperCase() + component.slice(1)}`)
 
         // Check if the story has a render function
         if (storyModule[selectedVariant]?.render) {
@@ -177,13 +179,9 @@ export default function StoryPage() {
     loadStory()
   }, [params])
 
-  const goBack = () => {
-    router.push("/storybook")
-  }
-
   if (isLoading) {
     return (
-      <div className="p-6">
+      <div className="container mx-auto py-10">
         <div className="flex items-center justify-center h-64">
           <div className="text-lg">Loading...</div>
         </div>
@@ -192,42 +190,35 @@ export default function StoryPage() {
   }
 
   return (
-    <div className="p-6">
-      <Button variant="ghost" onClick={goBack} className="mb-6">
-        <ChevronLeft className="mr-2 h-4 w-4" />
-        Back to Components
-      </Button>
+    <div className="container mx-auto py-10">
+      <h1 className="text-2xl font-bold mb-6">{storyTitle}</h1>
 
-      <h1 className="text-2xl font-bold mb-4">{storyTitle}</h1>
       {availableVariants.length > 0 && (
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-2">Variants:</h2>
-          <div className="flex flex-wrap gap-2">
+        <Tabs defaultValue={storyVariant.toLowerCase()} className="mb-6">
+          <TabsList>
             {availableVariants.map((variant) => (
-              <Link
-                key={variant}
-                href={`/storybook/${storyTitle}/${variant}`}
-                className={`px-3 py-1 rounded-md text-sm ${
-                  storyVariant === variant
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                }`}
-              >
-                {variant}
-              </Link>
+              <TabsTrigger key={variant} value={variant.toLowerCase()} asChild>
+                <a href={`/storybook/${params.path[0]}/${params.path[1]}/${variant}`}>{variant}</a>
+              </TabsTrigger>
             ))}
-          </div>
-        </div>
+          </TabsList>
+        </Tabs>
       )}
-      <div className="p-4 border rounded-lg bg-background">
-        {error ? (
-          <div className="text-red-500">{error}</div>
-        ) : storyComponent ? (
-          <StoryRenderer Story={storyComponent} />
-        ) : (
-          <div>No story component found</div>
-        )}
-      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{storyVariant}</CardTitle>
+        </CardHeader>
+        <CardContent className="flex items-center justify-center p-10 bg-background border-t">
+          {error ? (
+            <div className="text-red-500">{error}</div>
+          ) : storyComponent ? (
+            <StoryRenderer Story={storyComponent} />
+          ) : (
+            <div>No story component found</div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }

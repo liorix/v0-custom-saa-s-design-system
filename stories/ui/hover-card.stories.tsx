@@ -18,7 +18,6 @@ const meta: Meta<typeof HoverCard> = {
 export default meta
 type Story = StoryObj<typeof HoverCard>
 
-// Create a proper React component for the hover card demo
 function HoverCardDemo() {
   return (
     <HoverCard>
