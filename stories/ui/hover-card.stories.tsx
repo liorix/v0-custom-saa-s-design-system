@@ -18,8 +18,9 @@ const meta: Meta<typeof HoverCard> = {
 export default meta
 type Story = StoryObj<typeof HoverCard>
 
-export const Default: Story = {
-  render: () => (
+// Create a proper React component for the hover card demo
+function HoverCardDemo() {
+  return (
     <HoverCard>
       <HoverCardTrigger asChild>
         <Button variant="link">@nextjs</Button>
@@ -41,5 +42,9 @@ export const Default: Story = {
         </div>
       </HoverCardContent>
     </HoverCard>
-  ),
+  )
+}
+
+export const Default = {
+  component: HoverCardDemo,
 }
