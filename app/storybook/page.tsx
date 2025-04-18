@@ -1,157 +1,118 @@
 "use client"
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/card"
 import Link from "next/link"
 
-export default function StorybookPage() {
-  const [activeTab, setActiveTab] = useState<string>("components")
-
+// Separate the CategorySection component to make it clearer
+function CategorySection({
+  title,
+  description,
+  items,
+}: {
+  title: string
+  description: string
+  items: { name: string; path: string }[]
+}) {
   return (
-    <div className="container py-10">
-      <h1 className="text-3xl font-bold mb-6">SaaS Design System</h1>
-
-      <Tabs defaultValue="components" className="w-full" onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-4 mb-6">
-          <TabsTrigger value="components">UI Components</TabsTrigger>
-          <TabsTrigger value="atoms">Atoms</TabsTrigger>
-          <TabsTrigger value="molecules">Molecules</TabsTrigger>
-          <TabsTrigger value="organisms">Organisms</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="components" className="space-y-6">
-          <ComponentsGrid type="ui" />
-        </TabsContent>
-
-        <TabsContent value="atoms" className="space-y-6">
-          <ComponentsGrid type="atoms" />
-        </TabsContent>
-
-        <TabsContent value="molecules" className="space-y-6">
-          <ComponentsGrid type="molecules" />
-        </TabsContent>
-
-        <TabsContent value="organisms" className="space-y-6">
-          <ComponentsGrid type="organisms" />
-        </TabsContent>
-      </Tabs>
+    <div className="border rounded-lg p-6">
+      <h2 className="text-xl font-semibold mb-2">{title}</h2>
+      <p className="text-muted-foreground mb-4">{description}</p>
+      <ul className="space-y-2">
+        {items.map((item) => (
+          <li key={item.path}>
+            <Link href={item.path} className="text-blue-600 hover:underline">
+              {item.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
 
-function ComponentsGrid({ type }: { type: string }) {
-  // Map of component types to their components
-  const componentMap: Record<string, { name: string; description: string; path: string }[]> = {
-    ui: [
-      { name: "Accordion", description: "A vertically stacked set of interactive headings", path: "accordion" },
-      { name: "Alert", description: "Displays a callout for user attention", path: "alert" },
-      { name: "Alert Dialog", description: "A modal dialog that interrupts the user", path: "alert-dialog" },
-      { name: "Avatar", description: "An image element with a fallback", path: "avatar" },
-      { name: "Badge", description: "Small status descriptor for UI elements", path: "badge" },
-      { name: "Button", description: "Triggers an action or event", path: "button" },
-      { name: "Calendar", description: "A date field component with a popover calendar", path: "calendar" },
-      { name: "Card", description: "Container for content with header, body, and footer", path: "card" },
-      { name: "Checkbox", description: "A control that allows selection of multiple options", path: "checkbox" },
-      {
-        name: "Collapsible",
-        description: "An interactive component that expands/collapses content",
-        path: "collapsible",
-      },
-      { name: "Command", description: "Command menu for keyboard-first interactions", path: "command" },
-      { name: "Context Menu", description: "Displays a menu on right-click", path: "context-menu" },
-      { name: "Dialog", description: "A window overlaid on the primary window", path: "dialog" },
-      { name: "Dropdown Menu", description: "Displays a menu when triggered", path: "dropdown-menu" },
-      { name: "Hover Card", description: "Card that appears when hovering over an element", path: "hover-card" },
-      { name: "Input", description: "Form control for text input", path: "input" },
-      { name: "Label", description: "Accessible label for form controls", path: "label" },
-      { name: "Popover", description: "Displays floating content when triggered", path: "popover" },
-      { name: "Select", description: "Displays a list of options for selection", path: "select" },
-      { name: "Separator", description: "Visual divider between content", path: "separator" },
-      { name: "Sheet", description: "Side-anchored dialog component", path: "sheet" },
-      { name: "Skeleton", description: "Placeholder for loading content", path: "skeleton" },
-      { name: "Slider", description: "Select a value from a range", path: "slider" },
-      { name: "Switch", description: "Toggle between checked and unchecked states", path: "switch" },
-      { name: "Tabs", description: "Switch between different content views", path: "tabs" },
-      { name: "Textarea", description: "Multi-line text input control", path: "textarea" },
-      { name: "Toast", description: "Brief message that appears temporarily", path: "toast" },
-    ],
-    atoms: [
-      { name: "Logo", description: "Brand logo with customizable size and text", path: "logo" },
-      { name: "EmptyState", description: "Empty state placeholder with icon and message", path: "empty-state" },
-      { name: "AvatarGroup", description: "Group of avatars with overflow indicator", path: "avatar-group" },
-      { name: "PageHeader", description: "Page header with title, description, and actions", path: "page-header" },
-    ],
-    molecules: [
-      { name: "StatCard", description: "Card displaying a statistic with optional trend", path: "stat-card" },
-      {
-        name: "NotificationItem",
-        description: "Notification item with title, description, and actions",
-        path: "notification-item",
-      },
-      {
-        name: "FeatureCard",
-        description: "Card highlighting a feature with icon and description",
-        path: "feature-card",
-      },
-      { name: "FormField", description: "Form field with label, input, and validation", path: "form-field" },
-    ],
-    organisms: [
-      {
-        name: "OrganizationSwitcher",
-        description: "Dropdown for switching between organizations",
-        path: "organization-switcher",
-      },
-      {
-        name: "BillingPlanCard",
-        description: "Card displaying a billing plan with features",
-        path: "billing-plan-card",
-      },
-      { name: "AuthForm", description: "Authentication form for login or signup", path: "auth-form" },
-      { name: "DataTable", description: "Interactive table for displaying and managing data", path: "data-table" },
-      { name: "TeamMembersList", description: "List of team members with actions", path: "team-members-list" },
-    ],
-  }
-
-  const components = componentMap[type] || []
-
+// Make sure this is exported as default
+export default function StorybookPage() {
   return (
-    <>
-      <h2 className="text-2xl font-semibold mb-4">
-        {type === "ui" ? "UI Components" : `${type.charAt(0).toUpperCase() + type.slice(1)}`}
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {components.map((component) => (
-          <ComponentCard
-            key={component.name}
-            name={component.name}
-            description={component.description}
-            type={type}
-            path={component.path}
-          />
-        ))}
+    <div className="container mx-auto py-10">
+      <h1 className="text-3xl font-bold mb-8">Design System Components</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <CategorySection
+          title="UI Components"
+          description="Basic UI components from shadcn/ui"
+          items={[
+            { name: "Accordion", path: "/storybook/ui/accordion" },
+            { name: "Alert", path: "/storybook/ui/alert" },
+            { name: "Alert Dialog", path: "/storybook/ui/alert-dialog" },
+            { name: "Avatar", path: "/storybook/ui/avatar" },
+            { name: "Badge", path: "/storybook/ui/badge" },
+            { name: "Button", path: "/storybook/ui/button" },
+            { name: "Calendar", path: "/storybook/ui/calendar" },
+            { name: "Card", path: "/storybook/ui/card" },
+            { name: "Checkbox", path: "/storybook/ui/checkbox" },
+            { name: "Command", path: "/storybook/ui/command" },
+            { name: "Dialog", path: "/storybook/ui/dialog" },
+            { name: "Dropdown Menu", path: "/storybook/ui/dropdown-menu" },
+            { name: "Hover Card", path: "/storybook/ui/hover-card" },
+            { name: "Input", path: "/storybook/ui/input" },
+            { name: "Label", path: "/storybook/ui/label" },
+            { name: "Popover", path: "/storybook/ui/popover" },
+            { name: "Select", path: "/storybook/ui/select" },
+            { name: "Separator", path: "/storybook/ui/separator" },
+            { name: "Sheet", path: "/storybook/ui/sheet" },
+            { name: "Skeleton", path: "/storybook/ui/skeleton" },
+            { name: "Slider", path: "/storybook/ui/slider" },
+            { name: "Switch", path: "/storybook/ui/switch" },
+            { name: "Tabs", path: "/storybook/ui/tabs" },
+            { name: "Textarea", path: "/storybook/ui/textarea" },
+            { name: "Toast", path: "/storybook/ui/toast" },
+            { name: "Collapsible", path: "/storybook/ui/collapsible" },
+            { name: "Context Menu", path: "/storybook/ui/context-menu" },
+          ]}
+        />
+
+        <CategorySection
+          title="Atoms"
+          description="Fundamental building blocks"
+          items={[
+            { name: "Logo", path: "/storybook/atoms/logo" },
+            { name: "Empty State", path: "/storybook/atoms/empty-state" },
+            { name: "Avatar Group", path: "/storybook/atoms/avatar-group" },
+            { name: "Page Header", path: "/storybook/atoms/page-header" },
+          ]}
+        />
+
+        <CategorySection
+          title="Molecules"
+          description="Combinations of atoms"
+          items={[
+            { name: "Stat Card", path: "/storybook/molecules/stat-card" },
+            { name: "Notification Item", path: "/storybook/molecules/notification-item" },
+            { name: "Feature Card", path: "/storybook/molecules/feature-card" },
+            { name: "Form Field", path: "/storybook/molecules/form-field" },
+          ]}
+        />
+
+        <CategorySection
+          title="Organisms"
+          description="Complex UI components"
+          items={[
+            { name: "Organization Switcher", path: "/storybook/organisms/organization-switcher" },
+            { name: "Data Table", path: "/storybook/organisms/data-table" },
+            { name: "Billing Plan Card", path: "/storybook/organisms/billing-plan-card" },
+            { name: "Team Members List", path: "/storybook/organisms/team-members-list" },
+            { name: "Auth Form", path: "/storybook/organisms/auth-form" },
+          ]}
+        />
+
+        <CategorySection
+          title="Templates"
+          description="Page layouts"
+          items={[
+            { name: "Auth Layout", path: "/storybook/templates/auth-layout" },
+            { name: "Dashboard Layout", path: "/storybook/templates/dashboard-layout" },
+          ]}
+        />
       </div>
-    </>
-  )
-}
-
-function ComponentCard({
-  name,
-  description,
-  type,
-  path,
-}: { name: string; description: string; type: string; path: string }) {
-  return (
-    <Link href={`/storybook/${type}/${path}`}>
-      <Card className="h-full transition-all hover:shadow-md">
-        <CardHeader>
-          <CardTitle>{name}</CardTitle>
-          <CardDescription>{description}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="text-sm text-blue-600">View component →</div>
-        </CardContent>
-      </Card>
-    </Link>
+    </div>
   )
 }

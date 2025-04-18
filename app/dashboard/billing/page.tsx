@@ -2,172 +2,140 @@
 
 import { PageHeader } from "@/components/atoms/page-header"
 import { BillingPlanCard } from "@/components/organisms/billing-plan-card"
-import { DataTable } from "@/components/organisms/data-table"
-import { Button } from "@/components/ui/button"
+import { DashboardLayout } from "@/components/templates/dashboard-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import type { ColumnDef } from "@tanstack/react-table"
-import { Download } from "lucide-react"
-
-interface Invoice {
-  id: string
-  amount: number
-  status: "paid" | "pending" | "failed"
-  date: string
-}
-
-const invoices: Invoice[] = [
-  {
-    id: "INV-001",
-    amount: 100,
-    status: "paid",
-    date: "2023-01-01",
-  },
-  {
-    id: "INV-002",
-    amount: 200,
-    status: "paid",
-    date: "2023-02-01",
-  },
-  {
-    id: "INV-003",
-    amount: 300,
-    status: "pending",
-    date: "2023-03-01",
-  },
-]
-
-const columns: ColumnDef<Invoice>[] = [
-  {
-    accessorKey: "id",
-    header: "Invoice",
-  },
-  {
-    accessorKey: "amount",
-    header: "Amount",
-    cell: ({ row }) => {
-      return <div>${row.getValue("amount")}</div>
-    },
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const status = row.getValue("status") as string
-      return <div className="capitalize">{status}</div>
-    },
-  },
-  {
-    accessorKey: "date",
-    header: "Date",
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      return (
-        <Button variant="ghost" size="icon">
-          <Download className="h-4 w-4" />
-          <span className="sr-only">Download</span>
-        </Button>
-      )
-    },
-  },
-]
-
-const plans = [
-  {
-    name: "Starter",
-    description: "For individuals and small teams",
-    price: {
-      monthly: 9,
-      annually: true,
-    },
-    features: [
-      { name: "5 team members", included: true },
-      { name: "20GB storage", included: true },
-      { name: "Basic analytics", included: true },
-      { name: "Priority support", included: false },
-      { name: "Custom branding", included: false },
-    ],
-    popular: false,
-    current: false,
-  },
-  {
-    name: "Pro",
-    description: "For growing teams and businesses",
-    price: {
-      monthly: 29,
-      annually: true,
-    },
-    features: [
-      { name: "10 team members", included: true },
-      { name: "50GB storage", included: true },
-      { name: "Advanced analytics", included: true },
-      { name: "Priority support", included: true },
-      { name: "Custom branding", included: false },
-    ],
-    popular: true,
-    current: true,
-  },
-  {
-    name: "Enterprise",
-    description: "For large organizations",
-    price: {
-      monthly: 99,
-      annually: true,
-    },
-    features: [
-      { name: "Unlimited team members", included: true },
-      { name: "250GB storage", included: true },
-      { name: "Advanced analytics", included: true },
-      { name: "Priority support", included: true },
-      { name: "Custom branding", included: true },
-    ],
-    popular: false,
-    current: false,
-  },
-]
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useState } from "react"
 
 export default function BillingPage() {
-  const handleSelectPlan = (planName: string) => {
-    console.log(`Selected plan: ${planName}`)
-  }
+  const [currentOrganizationId, setCurrentOrganizationId] = useState("1")
+
+  const organizations = [
+    { id: "1", name: "Acme Inc" },
+    { id: "2", name: "Globex Corporation" },
+    { id: "3", name: "Initech" },
+  ]
+
+  const plans = [
+    {
+      name: "Starter",
+      description: "For individuals and small teams",
+      price: {
+        monthly: 9,
+        annually: true,
+      },
+      features: [
+        { name: "5 team members", included: true },
+        { name: "20GB storage", included: true },
+        { name: "Basic analytics", included: true },
+        { name: "Priority support", included: false },
+        { name: "Custom branding", included: false },
+      ],
+      current: false,
+    },
+    {
+      name: "Pro",
+      description: "For growing teams and businesses",
+      price: {
+        monthly: 29,
+        annually: true,
+      },
+      features: [
+        { name: "10 team members", included: true },
+        { name: "50GB storage", included: true },
+        { name: "Advanced analytics", included: true },
+        { name: "Priority support", included: true },
+        { name: "Custom branding", included: false },
+      ],
+      popular: true,
+      current: true,
+    },
+    {
+      name: "Enterprise",
+      description: "For large organizations",
+      price: {
+        monthly: 99,
+        annually: true,
+      },
+      features: [
+        { name: "Unlimited team members", included: true },
+        { name: "250GB storage", included: true },
+        { name: "Advanced analytics", included: true },
+        { name: "Priority support", included: true },
+        { name: "Custom branding", included: true },
+      ],
+      current: false,
+    },
+  ]
 
   return (
-    <div className="container space-y-8 py-8">
-      <PageHeader title="Billing" description="Manage your subscription and billing information" />
+    <DashboardLayout
+      organizations={organizations}
+      currentOrganizationId={currentOrganizationId}
+      onOrganizationChange={setCurrentOrganizationId}
+      onCreateOrganization={() => console.log("Create organization")}
+      onSignOut={() => console.log("Sign out")}
+    >
+      <div className="container space-y-8 py-8">
+        <PageHeader title="Billing" description="Manage your subscription and billing information" />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Subscription Plans</CardTitle>
-          <CardDescription>Choose the plan that best fits your needs</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-6 md:grid-cols-3">
-            {plans.map((plan) => (
-              <BillingPlanCard
-                key={plan.name}
-                name={plan.name}
-                description={plan.description}
-                price={plan.price}
-                features={plan.features}
-                popular={plan.popular}
-                current={plan.current}
-                onSelect={() => handleSelectPlan(plan.name)}
-              />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+        <Tabs defaultValue="plans" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="plans">Plans</TabsTrigger>
+            <TabsTrigger value="invoices">Invoices</TabsTrigger>
+            <TabsTrigger value="payment">Payment Methods</TabsTrigger>
+          </TabsList>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Billing History</CardTitle>
-          <CardDescription>View and download your past invoices</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <DataTable columns={columns} data={invoices} />
-        </CardContent>
-      </Card>
-    </div>
+          <TabsContent value="plans" className="space-y-4">
+            <div className="grid gap-6 md:grid-cols-3">
+              {plans.map((plan) => (
+                <BillingPlanCard
+                  key={plan.name}
+                  name={plan.name}
+                  description={plan.description}
+                  price={plan.price}
+                  features={plan.features}
+                  popular={plan.popular}
+                  current={plan.current}
+                  onSelect={() => console.log(`Selected plan: ${plan.name}`)}
+                />
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="invoices" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Invoices</CardTitle>
+                <CardDescription>View and download your invoices</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="rounded-md border">
+                  <div className="p-4">
+                    <p className="text-sm text-muted-foreground">No invoices found.</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="payment" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Payment Methods</CardTitle>
+                <CardDescription>Manage your payment methods</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="rounded-md border">
+                  <div className="p-4">
+                    <p className="text-sm text-muted-foreground">No payment methods found.</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </DashboardLayout>
   )
 }

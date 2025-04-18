@@ -1,139 +1,96 @@
 "use client"
 
 import { PageHeader } from "@/components/atoms/page-header"
-import { DataTable } from "@/components/organisms/data-table"
+import { DashboardLayout } from "@/components/templates/dashboard-layout"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import type { ColumnDef } from "@tanstack/react-table"
-import { Download, FileText } from "lucide-react"
-
-interface Invoice {
-  id: string
-  amount: number
-  status: "paid" | "pending" | "failed"
-  date: string
-  dueDate: string
-}
-
-const invoices: Invoice[] = [
-  {
-    id: "INV-001",
-    amount: 100,
-    status: "paid",
-    date: "2023-01-01",
-    dueDate: "2023-01-15",
-  },
-  {
-    id: "INV-002",
-    amount: 200,
-    status: "paid",
-    date: "2023-02-01",
-    dueDate: "2023-02-15",
-  },
-  {
-    id: "INV-003",
-    amount: 300,
-    status: "pending",
-    date: "2023-03-01",
-    dueDate: "2023-03-15",
-  },
-  {
-    id: "INV-004",
-    amount: 150,
-    status: "paid",
-    date: "2023-04-01",
-    dueDate: "2023-04-15",
-  },
-  {
-    id: "INV-005",
-    amount: 250,
-    status: "failed",
-    date: "2023-05-01",
-    dueDate: "2023-05-15",
-  },
-  {
-    id: "INV-006",
-    amount: 350,
-    status: "pending",
-    date: "2023-06-01",
-    dueDate: "2023-06-15",
-  },
-]
-
-const columns: ColumnDef<Invoice>[] = [
-  {
-    accessorKey: "id",
-    header: "Invoice",
-  },
-  {
-    accessorKey: "amount",
-    header: "Amount",
-    cell: ({ row }) => {
-      return <div>${row.getValue("amount")}</div>
-    },
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const status = row.getValue("status") as string
-      return (
-        <div className="capitalize">
-          <span
-            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-              status === "paid"
-                ? "bg-green-100 text-green-800"
-                : status === "pending"
-                  ? "bg-yellow-100 text-yellow-800"
-                  : "bg-red-100 text-red-800"
-            }`}
-          >
-            {status}
-          </span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: "date",
-    header: "Date",
-  },
-  {
-    accessorKey: "dueDate",
-    header: "Due Date",
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      return (
-        <Button variant="ghost" size="icon">
-          <Download className="h-4 w-4" />
-          <span className="sr-only">Download</span>
-        </Button>
-      )
-    },
-  },
-]
+import { Download } from "lucide-react"
+import { useState } from "react"
 
 export default function InvoicesPage() {
-  return (
-    <div className="container space-y-8 py-8">
-      <PageHeader title="Invoices" description="View and download your invoices">
-        <Button variant="outline">
-          <FileText className="mr-2 h-4 w-4" />
-          Export All
-        </Button>
-      </PageHeader>
+  const [currentOrganizationId, setCurrentOrganizationId] = useState("1")
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Billing History</CardTitle>
-          <CardDescription>View and download your past invoices</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <DataTable columns={columns} data={invoices} />
-        </CardContent>
-      </Card>
-    </div>
+  const organizations = [
+    { id: "1", name: "Acme Inc" },
+    { id: "2", name: "Globex Corporation" },
+    { id: "3", name: "Initech" },
+  ]
+
+  const invoices = [
+    {
+      id: "INV-001",
+      date: "Jan 1, 2023",
+      amount: "$29.00",
+      status: "Paid",
+    },
+    {
+      id: "INV-002",
+      date: "Feb 1, 2023",
+      amount: "$29.00",
+      status: "Paid",
+    },
+    {
+      id: "INV-003",
+      date: "Mar 1, 2023",
+      amount: "$29.00",
+      status: "Paid",
+    },
+  ]
+
+  return (
+    <DashboardLayout
+      organizations={organizations}
+      currentOrganizationId={currentOrganizationId}
+      onOrganizationChange={setCurrentOrganizationId}
+      onCreateOrganization={() => console.log("Create organization")}
+      onSignOut={() => console.log("Sign out")}
+    >
+      <div className="container space-y-8 py-8">
+        <PageHeader title="Invoices" description="View and download your invoices" />
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Billing History</CardTitle>
+            <CardDescription>View all your past invoices</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {invoices.length > 0 ? (
+              <div className="rounded-md border">
+                <div className="grid grid-cols-4 p-4 font-medium border-b">
+                  <div>Invoice</div>
+                  <div>Date</div>
+                  <div>Amount</div>
+                  <div>Status</div>
+                </div>
+                {invoices.map((invoice) => (
+                  <div key={invoice.id} className="grid grid-cols-4 p-4 border-b last:border-0 items-center">
+                    <div className="flex items-center gap-2">
+                      {invoice.id}
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Download className="h-4 w-4" />
+                        <span className="sr-only">Download</span>
+                      </Button>
+                    </div>
+                    <div>{invoice.date}</div>
+                    <div>{invoice.amount}</div>
+                    <div>
+                      <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800">
+                        {invoice.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-md border">
+                <div className="p-4">
+                  <p className="text-sm text-muted-foreground">No invoices found.</p>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </DashboardLayout>
   )
 }
