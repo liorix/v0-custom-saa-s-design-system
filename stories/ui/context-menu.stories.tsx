@@ -1,3 +1,5 @@
+"use client"
+
 import type { Meta, StoryObj } from "@storybook/react"
 import {
   ContextMenu,
@@ -72,23 +74,6 @@ export const Default: Story = {
           <ContextMenuRadioItem value="pedro">Pedro Duarte</ContextMenuRadioItem>
           <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
         </ContextMenuRadioGroup>
-      </ContextMenuContent>
-    </ContextMenu>
-  ),
-}
-
-export const Simple: Story = {
-  render: () => (
-    <ContextMenu>
-      <ContextMenuTrigger className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm">
-        Right click here
-      </ContextMenuTrigger>
-      <ContextMenuContent className="w-64">
-        <ContextMenuItem>Profile</ContextMenuItem>
-        <ContextMenuItem>Settings</ContextMenuItem>
-        <ContextMenuSeparator />
-        <ContextMenuItem>Help</ContextMenuItem>
-        <ContextMenuItem>Sign out</ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   ),
