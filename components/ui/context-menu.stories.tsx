@@ -13,19 +13,22 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
-} from "@/components/ui/context-menu"
+} from "./context-menu"
 
 const meta: Meta<typeof ContextMenu> = {
   title: "UI/ContextMenu",
   component: ContextMenu,
+  parameters: {
+    layout: "centered",
+  },
   tags: ["autodocs"],
 }
 
 export default meta
 type Story = StoryObj<typeof ContextMenu>
 
-export const Default: Story = {
-  render: () => (
+function ContextMenuDemo() {
+  return (
     <ContextMenu>
       <ContextMenuTrigger className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm">
         Right click here
@@ -71,5 +74,9 @@ export const Default: Story = {
         </ContextMenuRadioGroup>
       </ContextMenuContent>
     </ContextMenu>
-  ),
+  )
+}
+
+export const Default = {
+  render: () => <ContextMenuDemo />,
 }

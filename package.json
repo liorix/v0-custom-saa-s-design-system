@@ -58,18 +58,20 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.6",
     "zod": "^3.24.1",
-    "webpack": "latest",
     "storybook": "latest",
     "@storybook/test": "latest",
     "@testing-library/dom": "latest",
+    "webpack": "latest",
     "@tanstack/react-table": "latest",
-    "@storybook/nextjs": "latest",
     "@storybook/react": "latest",
     "@storybook/addon-themes": "latest",
     "child_process": "latest",
     "fs-extra": "latest",
     "path": "latest",
-    "@testing-library/react": "latest"
+    "@testing-library/react": "latest",
+    "glob": "latest",
+    "chalk": "latest",
+    "@storybook/nextjs": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

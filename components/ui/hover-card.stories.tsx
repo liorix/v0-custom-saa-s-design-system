@@ -1,20 +1,25 @@
+"use client"
+
 import type { Meta, StoryObj } from "@storybook/react"
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
-import { Button } from "@/components/ui/button"
 import { CalendarDays } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "./avatar"
+import { Button } from "./button"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card"
 
 const meta: Meta<typeof HoverCard> = {
   title: "UI/HoverCard",
   component: HoverCard,
+  parameters: {
+    layout: "centered",
+  },
   tags: ["autodocs"],
 }
 
 export default meta
 type Story = StoryObj<typeof HoverCard>
 
-export const Default: Story = {
-  render: () => (
+function HoverCardDemo() {
+  return (
     <HoverCard>
       <HoverCardTrigger asChild>
         <Button variant="link">@nextjs</Button>
@@ -36,5 +41,9 @@ export const Default: Story = {
         </div>
       </HoverCardContent>
     </HoverCard>
-  ),
+  )
+}
+
+export const Default = {
+  render: () => <HoverCardDemo />,
 }

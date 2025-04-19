@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import Link from "next/link"
 import { Home, ArrowLeft, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -87,6 +87,7 @@ export default function StorybookLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const router = useRouter()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // Sidebar content component to reuse in both desktop and mobile
@@ -101,11 +102,13 @@ export default function StorybookLayout({
         </Link>
       </div>
       <div className="px-4 py-2">
-        <Button variant="outline" size="sm" className="w-full" asChild onClick={() => setIsMobileMenuOpen(false)}>
-          <Link href="/dashboard">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to App
-          </Link>
+        <Button
+          size="sm"
+          className="w-full !bg-black !text-white hover:!bg-black/90 [&_svg]:!text-white"
+          onClick={() => router.push("/dashboard")}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to App
         </Button>
       </div>
       <div className="flex-1 overflow-auto py-4">
