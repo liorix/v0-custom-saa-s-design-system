@@ -3,21 +3,10 @@
 import type React from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import { Home, ArrowLeft } from "lucide-react"
+import { Home, ArrowLeft, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
+import { useState } from "react"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import "../globals.css"
 import "./storybook.css"
 
@@ -98,60 +87,87 @@ export default function StorybookLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // Sidebar content component to reuse in both desktop and mobile
+  const SidebarContent = () => (
+    <div className="flex h-full flex-col">
+      <div className="flex items-center gap-2 px-4 py-4 border-b">
+        <Link href="/storybook" className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
+          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <Home className="h-4 w-4" />
+          </div>
+          <span className="font-bold">Design System</span>
+        </Link>
+      </div>
+      <div className="px-4 py-2">
+        <Button variant="outline" size="sm" className="w-full" asChild onClick={() => setIsMobileMenuOpen(false)}>
+          <Link href="/dashboard">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to App
+          </Link>
+        </Button>
+      </div>
+      <div className="flex-1 overflow-auto py-4">
+        {Object.entries(categories).map(([key, category]) => (
+          <div key={key} className="mb-6">
+            <h2 className="px-4 mb-2 text-xs font-semibold text-muted-foreground">{category.label}</h2>
+            <div className="space-y-1">
+              {category.items.map((item) => (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  className={cn(
+                    "flex items-center px-4 py-2 text-sm font-medium rounded-md",
+                    pathname === item.path || pathname.startsWith(`${item.path}/`)
+                      ? "bg-accent text-accent-foreground"
+                      : "hover:bg-accent/50",
+                  )}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-background">
-      <SidebarProvider>
-        <div className="flex min-h-screen">
-          <Sidebar>
-            <SidebarHeader>
-              <div className="flex items-center gap-2 px-4 py-2">
-                <Link href="/storybook" className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-                    <Home className="h-4 w-4" />
-                  </div>
-                  <span className="font-bold">Design System</span>
-                </Link>
-              </div>
-              <div className="px-2 py-2">
-                <Button variant="outline" size="sm" className="w-full" asChild>
-                  <Link href="/dashboard">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back to App
-                  </Link>
-                </Button>
-              </div>
-            </SidebarHeader>
-            <SidebarContent>
-              {Object.entries(categories).map(([key, category]) => (
-                <SidebarGroup key={key}>
-                  <SidebarGroupLabel>{category.label}</SidebarGroupLabel>
-                  <SidebarGroupContent>
-                    <SidebarMenu>
-                      {category.items.map((item) => (
-                        <SidebarMenuItem key={item.path}>
-                          <SidebarMenuButton
-                            asChild
-                            isActive={pathname === item.path || pathname.startsWith(`${item.path}/`)}
-                          >
-                            <Link href={item.path}>{item.name}</Link>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      ))}
-                    </SidebarMenu>
-                  </SidebarGroupContent>
-                </SidebarGroup>
-              ))}
-            </SidebarContent>
-          </Sidebar>
-          <div className="flex-1 overflow-auto">
-            <div className="p-4 md:hidden">
-              <SidebarTrigger />
-            </div>
-            {children}
-          </div>
+      <div className="flex min-h-screen">
+        {/* Desktop Sidebar */}
+        <div className="hidden md:block w-64 border-r shrink-0 overflow-auto">
+          <SidebarContent />
         </div>
-      </SidebarProvider>
+
+        {/* Main Content */}
+        <div className="flex-1 overflow-auto">
+          {/* Mobile Header */}
+          <div className="p-4 border-b md:hidden">
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle Menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64 p-0">
+                <SidebarContent />
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          {children}
+        </div>
+      </div>
     </div>
   )
+}
+
+// Helper function for class names
+function cn(...classes: (string | boolean | undefined)[]) {
+  return classes.filter(Boolean).join(" ")
 }
