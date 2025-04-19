@@ -6,6 +6,7 @@ import { DashboardLayout } from "@/components/templates/dashboard-layout"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { useState } from "react"
+import { ContentContainer } from "@/components/templates/content-container"
 
 export default function TeamPage() {
   const [currentOrganizationId, setCurrentOrganizationId] = useState("1")
@@ -50,7 +51,7 @@ export default function TeamPage() {
       onCreateOrganization={() => console.log("Create organization")}
       onSignOut={() => console.log("Sign out")}
     >
-      <div className="container space-y-8 py-8">
+      <ContentContainer>
         <PageHeader title="Team Members" description="Manage your team members and their permissions">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
@@ -64,7 +65,7 @@ export default function TeamPage() {
           onChangeMemberRole={(id, role) => console.log(`Change role for member ${id} to ${role}`)}
           onResendInvite={(id) => console.log(`Resend invite to member ${id}`)}
         />
-      </div>
+      </ContentContainer>
     </DashboardLayout>
   )
 }

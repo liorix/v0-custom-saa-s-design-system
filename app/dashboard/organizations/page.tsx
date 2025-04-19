@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Building2, MoreHorizontal, Plus, Users } from "lucide-react"
 import { useState } from "react"
+import { ContentContainer } from "@/components/templates/content-container"
 
 interface Organization {
   id: string
@@ -124,7 +125,7 @@ export default function OrganizationsPage() {
       onCreateOrganization={() => setIsAddDialogOpen(true)}
       onSignOut={() => console.log("Sign out")}
     >
-      <div className="container space-y-8 py-8">
+      <ContentContainer>
         <PageHeader title="Organizations" description="Manage your organizations">
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
@@ -275,7 +276,7 @@ export default function OrganizationsPage() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </div>
+      </ContentContainer>
     </DashboardLayout>
   )
 }

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { DashboardLayout } from "@/components/templates/dashboard-layout"
 import { Plus, Users, CreditCard, TrendingUp, BarChart } from "lucide-react"
 import { useState } from "react"
+import { ContentContainer } from "@/components/templates/content-container"
 
 export default function DashboardPage() {
   const [currentOrganizationId, setCurrentOrganizationId] = useState("1")
@@ -24,7 +25,7 @@ export default function DashboardPage() {
       onCreateOrganization={() => console.log("Create organization")}
       onSignOut={() => console.log("Sign out")}
     >
-      <div className="container space-y-8 py-8">
+      <ContentContainer>
         <PageHeader title="Dashboard" description="Overview of your account">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
@@ -57,7 +58,7 @@ export default function DashboardPage() {
           />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2 mt-8">
           <div className="rounded-lg border p-6">
             <h3 className="text-lg font-medium mb-4">Recent Activity</h3>
             <div className="space-y-4">
@@ -78,7 +79,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-      </div>
+      </ContentContainer>
     </DashboardLayout>
   )
 }

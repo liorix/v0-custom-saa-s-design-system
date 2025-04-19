@@ -6,6 +6,7 @@ import { DashboardLayout } from "@/components/templates/dashboard-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState } from "react"
+import { ContentContainer } from "@/components/templates/content-container"
 
 export default function BillingPage() {
   const [currentOrganizationId, setCurrentOrganizationId] = useState("1")
@@ -76,7 +77,7 @@ export default function BillingPage() {
       onCreateOrganization={() => console.log("Create organization")}
       onSignOut={() => console.log("Sign out")}
     >
-      <div className="container space-y-8 py-8">
+      <ContentContainer>
         <PageHeader title="Billing" description="Manage your subscription and billing information" />
 
         <Tabs defaultValue="plans" className="space-y-4">
@@ -135,7 +136,7 @@ export default function BillingPage() {
             </Card>
           </TabsContent>
         </Tabs>
-      </div>
+      </ContentContainer>
     </DashboardLayout>
   )
 }

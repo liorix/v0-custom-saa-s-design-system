@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState } from "react"
+import { ContentContainer } from "@/components/templates/content-container"
 
 export default function SettingsPage() {
   const [currentOrganizationId, setCurrentOrganizationId] = useState("1")
@@ -26,7 +27,7 @@ export default function SettingsPage() {
       onCreateOrganization={() => console.log("Create organization")}
       onSignOut={() => console.log("Sign out")}
     >
-      <div className="container space-y-8 py-8">
+      <ContentContainer>
         <PageHeader title="Settings" description="Manage your account settings" />
 
         <Tabs defaultValue="general" className="space-y-4">
@@ -105,7 +106,7 @@ export default function SettingsPage() {
             </Card>
           </TabsContent>
         </Tabs>
-      </div>
+      </ContentContainer>
     </DashboardLayout>
   )
 }

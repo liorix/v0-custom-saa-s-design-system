@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Users, CreditCard, ArrowUpRight, ArrowDownRight, Calendar, Download } from "lucide-react"
 import { useState } from "react"
+import { ContentContainer } from "@/components/templates/content-container"
 
 // Simple component for a line chart visualization
 function LineChart({ className }: { className?: string }) {
@@ -91,7 +92,7 @@ export default function AnalyticsPage() {
       onCreateOrganization={() => console.log("Create organization")}
       onSignOut={() => console.log("Sign out")}
     >
-      <div className="container space-y-8 py-8">
+      <ContentContainer>
         <PageHeader title="Analytics" description="Overview of your business performance">
           <div className="flex gap-2">
             <Button variant="outline">
@@ -136,7 +137,7 @@ export default function AnalyticsPage() {
           />
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-4">
+        <Tabs defaultValue="overview" className="space-y-4 mt-8">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
@@ -268,7 +269,7 @@ export default function AnalyticsPage() {
             </Card>
           </TabsContent>
         </Tabs>
-      </div>
+      </ContentContainer>
     </DashboardLayout>
   )
 }

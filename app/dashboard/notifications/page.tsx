@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Bell, Check } from "lucide-react"
 import { useState } from "react"
+import { ContentContainer } from "@/components/templates/content-container"
 
 interface Notification {
   id: string
@@ -97,7 +98,7 @@ export default function NotificationsPage() {
       onCreateOrganization={() => console.log("Create organization")}
       onSignOut={() => console.log("Sign out")}
     >
-      <div className="container space-y-8 py-8">
+      <ContentContainer>
         <PageHeader title="Notifications" description="Manage your notifications">
           {unreadCount > 0 && (
             <Button variant="outline" onClick={handleMarkAllAsRead}>
@@ -202,7 +203,7 @@ export default function NotificationsPage() {
             )}
           </TabsContent>
         </Tabs>
-      </div>
+      </ContentContainer>
     </DashboardLayout>
   )
 }

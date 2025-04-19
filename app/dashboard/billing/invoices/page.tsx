@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Download } from "lucide-react"
 import { useState } from "react"
+import { ContentContainer } from "@/components/templates/content-container"
 
 export default function InvoicesPage() {
   const [currentOrganizationId, setCurrentOrganizationId] = useState("1")
@@ -45,7 +46,7 @@ export default function InvoicesPage() {
       onCreateOrganization={() => console.log("Create organization")}
       onSignOut={() => console.log("Sign out")}
     >
-      <div className="container space-y-8 py-8">
+      <ContentContainer>
         <PageHeader title="Invoices" description="View and download your invoices" />
 
         <Card>
@@ -90,7 +91,7 @@ export default function InvoicesPage() {
             )}
           </CardContent>
         </Card>
-      </div>
+      </ContentContainer>
     </DashboardLayout>
   )
 }
