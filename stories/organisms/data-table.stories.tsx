@@ -123,27 +123,14 @@ const columns: ColumnDef<User>[] = [
   },
 ]
 
-export const Default: Story = {
-  args: {
-    columns,
-    data: users,
-    className: "w-full",
-  },
+export const Default = {
+  render: () => <DataTable columns={columns} data={users} className="w-full" />,
 }
 
-export const Empty: Story = {
-  args: {
-    columns,
-    data: [],
-    className: "w-full",
-  },
+export const Empty = {
+  render: () => <DataTable columns={columns} data={[]} className="w-full" />,
 }
 
-export const WithPageSize: Story = {
-  args: {
-    columns,
-    data: users,
-    pageSize: 3,
-    className: "w-full",
-  },
+export const WithPageSize = {
+  render: () => <DataTable columns={columns} data={users} pageSize={3} className="w-full" />,
 }

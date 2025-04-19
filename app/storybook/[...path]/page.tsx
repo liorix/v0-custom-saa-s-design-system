@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useEffect, useState } from "react"
-import { useParams, notFound } from "next/navigation"
+import { useParams, notFound, useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -107,21 +107,31 @@ function StoryRenderer({ Story }: { Story: React.ComponentType<any> }) {
 
 export default function StoryPage() {
   const params = useParams()
+  const router = useRouter()
   const [storyComponent, setStoryComponent] = useState<React.ComponentType<any> | null>(null)
   const [storyTitle, setStoryTitle] = useState("")
   const [storyVariant, setStoryVariant] = useState("")
   const [availableVariants, setAvailableVariants] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [hasInitialParams, setHasInitialParams] = useState(false)
+
+  useEffect(() => {
+    if (params?.path && Array.isArray(params.path) && params.path.length >= 2) {
+      setHasInitialParams(true)
+    } else {
+      setHasInitialParams(false)
+    }
+  }, [params])
 
   useEffect(() => {
     async function loadStory() {
-      if (!params?.path || !Array.isArray(params.path) || params.path.length < 2) {
+      if (!hasInitialParams) {
         setIsLoading(false)
-        return notFound()
+        return
       }
 
-      const [category, component, variant = "Default"] = params.path
+      const [category, component, variantFromUrl] = params.path
 
       // Check if the category and component exist in our map
       if (
@@ -146,10 +156,14 @@ export default function StoryPage() {
           (key) => key !== "default" && typeof storyModule[key] === "object",
         )
 
+        if (variants.length === 0) {
+          throw new Error(`No story variants found for ${category}/${component}`)
+        }
+
         setAvailableVariants(variants)
 
-        // Set the current story variant
-        const selectedVariant = variant || "Default"
+        // Set the current story variant - use the one from URL if provided, otherwise use the first available variant
+        const selectedVariant = variantFromUrl || variants[0]
         setStoryVariant(selectedVariant)
 
         // Set the story title
@@ -164,7 +178,17 @@ export default function StoryPage() {
         else if (storyModule[selectedVariant]?.component) {
           setStoryComponent(() => storyModule[selectedVariant].component)
         } else {
-          setError("Story variant does not have a component or render function")
+          // If no variant is found, try to use the first available variant
+          const firstVariant = variants[0]
+          if (storyModule[firstVariant]?.render) {
+            setStoryComponent(() => () => storyModule[firstVariant].render())
+            setStoryVariant(firstVariant)
+          } else if (storyModule[firstVariant]?.component) {
+            setStoryComponent(() => storyModule[firstVariant].component)
+            setStoryVariant(firstVariant)
+          } else {
+            setError(`Story variant "${selectedVariant}" does not have a component or render function`)
+          }
         }
       } catch (error) {
         console.error("Error loading story:", error)
@@ -177,7 +201,15 @@ export default function StoryPage() {
     setIsLoading(true)
     setError(null)
     loadStory()
-  }, [params])
+  }, [params, hasInitialParams])
+
+  // Redirect to the first variant if no variant is specified
+  useEffect(() => {
+    if (!isLoading && hasInitialParams && params.path && params.path.length === 2 && availableVariants.length > 0) {
+      const [category, component] = params.path
+      router.replace(`/storybook/${category}/${component}/${availableVariants[0]}`)
+    }
+  }, [isLoading, params, availableVariants, hasInitialParams, router])
 
   if (isLoading) {
     return (
@@ -194,7 +226,7 @@ export default function StoryPage() {
       <h1 className="text-2xl font-bold mb-6">{storyTitle}</h1>
 
       {availableVariants.length > 0 && (
-        <Tabs defaultValue={storyVariant.toLowerCase()} className="mb-6">
+        <Tabs value={storyVariant.toLowerCase()} className="mb-6">
           <TabsList>
             {availableVariants.map((variant) => (
               <TabsTrigger key={variant} value={variant.toLowerCase()} asChild>

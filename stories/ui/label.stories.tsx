@@ -14,13 +14,11 @@ const meta: Meta<typeof Label> = {
 export default meta
 type Story = StoryObj<typeof Label>
 
-export const Default: Story = {
-  args: {
-    children: "Label",
-  },
+export const Default = {
+  render: () => <Label>Label</Label>,
 }
 
-export const WithInput: Story = {
+export const WithInput = {
   render: () => (
     <div className="grid w-full max-w-sm items-center gap-1.5">
       <Label htmlFor="email">Email</Label>
@@ -29,7 +27,7 @@ export const WithInput: Story = {
   ),
 }
 
-export const Required: Story = {
+export const Required = {
   render: () => (
     <div className="grid w-full max-w-sm items-center gap-1.5">
       <Label htmlFor="email">

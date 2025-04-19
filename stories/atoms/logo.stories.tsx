@@ -23,40 +23,22 @@ const meta: Meta<typeof Logo> = {
 export default meta
 type Story = StoryObj<typeof Logo>
 
-export const Default: Story = {
-  args: {
-    icon: Home,
-    text: "Acme SaaS",
-  },
+export const Default = {
+  render: () => <Logo icon={Home} text="Acme SaaS" />,
 }
 
-export const Small: Story = {
-  args: {
-    icon: Zap,
-    size: "sm",
-    text: "Acme SaaS",
-  },
+export const Small = {
+  render: () => <Logo icon={Zap} size="sm" text="Acme SaaS" />,
 }
 
-export const Medium: Story = {
-  args: {
-    icon: Building,
-    size: "md",
-    text: "Acme SaaS",
-  },
+export const Medium = {
+  render: () => <Logo icon={Building} size="md" text="Acme SaaS" />,
 }
 
-export const Large: Story = {
-  args: {
-    icon: Rocket,
-    size: "lg",
-    text: "Acme SaaS",
-  },
+export const Large = {
+  render: () => <Logo icon={Rocket} size="lg" text="Acme SaaS" />,
 }
 
-export const IconOnly: Story = {
-  args: {
-    icon: Home,
-    showText: false,
-  },
+export const IconOnly = {
+  render: () => <Logo icon={Home} showText={false} />,
 }

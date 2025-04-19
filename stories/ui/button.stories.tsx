@@ -28,67 +28,45 @@ export default meta
 type Story = StoryObj<typeof Button>
 
 export const Default: Story = {
-  args: {
-    children: "Button",
-  },
+  render: () => <Button>Button</Button>,
 }
 
 export const Destructive: Story = {
-  args: {
-    variant: "destructive",
-    children: "Delete",
-  },
+  render: () => <Button variant="destructive">Delete</Button>,
 }
 
 export const Outline: Story = {
-  args: {
-    variant: "outline",
-    children: "Outline",
-  },
+  render: () => <Button variant="outline">Outline</Button>,
 }
 
 export const Secondary: Story = {
-  args: {
-    variant: "secondary",
-    children: "Secondary",
-  },
+  render: () => <Button variant="secondary">Secondary</Button>,
 }
 
 export const Ghost: Story = {
-  args: {
-    variant: "ghost",
-    children: "Ghost",
-  },
+  render: () => <Button variant="ghost">Ghost</Button>,
 }
 
 export const Link: Story = {
-  args: {
-    variant: "link",
-    children: "Link",
-  },
+  render: () => <Button variant="link">Link</Button>,
 }
 
 export const WithIcon: Story = {
-  args: {
-    children: (
-      <>
-        <Mail className="mr-2 h-4 w-4" /> Login with Email
-      </>
-    ),
-  },
+  render: () => (
+    <Button>
+      <Mail className="mr-2 h-4 w-4" /> Login with Email
+    </Button>
+  ),
 }
 
 export const IconButton: Story = {
-  args: {
-    size: "icon",
-    children: <Mail className="h-4 w-4" />,
-    "aria-label": "Send email",
-  },
+  render: () => (
+    <Button size="icon" aria-label="Send email">
+      <Mail className="h-4 w-4" />
+    </Button>
+  ),
 }
 
 export const Loading: Story = {
-  args: {
-    children: "Loading...",
-    disabled: true,
-  },
+  render: () => <Button disabled>Loading...</Button>,
 }

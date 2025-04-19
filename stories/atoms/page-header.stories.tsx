@@ -15,47 +15,46 @@ const meta: Meta<typeof PageHeader> = {
 export default meta
 type Story = StoryObj<typeof PageHeader>
 
-export const Default: Story = {
-  args: {
-    title: "Page Title",
-    description: "This is a description of the page and its contents.",
-  },
+export const Default = {
+  render: () => <PageHeader title="Page Title" description="This is a description of the page and its contents." />,
 }
 
-export const WithSingleAction: Story = {
-  args: {
-    title: "Team Members",
-    description: "Manage your team members and their account permissions.",
-    children: (
-      <Button>
-        <Plus className="mr-2 h-4 w-4" />
-        Add Member
-      </Button>
-    ),
-  },
-}
-
-export const WithMultipleActions: Story = {
-  args: {
-    title: "Analytics",
-    description: "View detailed analytics about your application.",
-    children: (
-      <>
-        <Button variant="outline" className="mr-2">
-          <Download className="mr-2 h-4 w-4" />
-          Export
-        </Button>
+export const WithSingleAction = {
+  render: () => (
+    <PageHeader
+      title="Team Members"
+      description="Manage your team members and their account permissions."
+      children={
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          Create Report
+          Add Member
         </Button>
-      </>
-    ),
-  },
+      }
+    />
+  ),
 }
 
-export const TitleOnly: Story = {
-  args: {
-    title: "Settings",
-  },
+export const WithMultipleActions = {
+  render: () => (
+    <PageHeader
+      title="Analytics"
+      description="View detailed analytics about your application."
+      children={
+        <>
+          <Button variant="outline" className="mr-2">
+            <Download className="mr-2 h-4 w-4" />
+            Export
+          </Button>
+          <Button>
+            <Plus className="mr-2 h-4 w-4" />
+            Create Report
+          </Button>
+        </>
+      }
+    />
+  ),
+}
+
+export const TitleOnly = {
+  render: () => <PageHeader title="Settings" />,
 }

@@ -14,14 +14,11 @@ const meta: Meta<typeof Textarea> = {
 export default meta
 type Story = StoryObj<typeof Textarea>
 
-export const Default: Story = {
-  args: {
-    placeholder: "Type your message here.",
-    className: "w-[300px]",
-  },
+export const Default = {
+  render: () => <Textarea placeholder="Type your message here." className="w-[300px]" />,
 }
 
-export const WithLabel: Story = {
+export const WithLabel = {
   render: () => (
     <div className="grid w-full gap-1.5">
       <Label htmlFor="message">Your message</Label>
@@ -30,17 +27,10 @@ export const WithLabel: Story = {
   ),
 }
 
-export const Disabled: Story = {
-  args: {
-    placeholder: "Type your message here.",
-    disabled: true,
-    className: "w-[300px]",
-  },
+export const Disabled = {
+  render: () => <Textarea placeholder="Type your message here." disabled className="w-[300px]" />,
 }
 
-export const WithDefaultValue: Story = {
-  args: {
-    defaultValue: "This is a default value for the textarea.",
-    className: "w-[300px]",
-  },
+export const WithDefaultValue = {
+  render: () => <Textarea defaultValue="This is a default value for the textarea." className="w-[300px]" />,
 }

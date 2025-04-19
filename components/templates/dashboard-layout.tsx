@@ -20,6 +20,7 @@ import {
   SidebarProvider,
   SidebarRail,
   SidebarSeparator,
+  SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import {
@@ -308,6 +309,10 @@ export function DashboardLayout({
           <SidebarRail />
         </Sidebar>
         <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="md:hidden" />
+            <div className="flex-1" />
+          </header>
           <main className={cn("flex-1 overflow-auto", className)}>{children}</main>
         </SidebarInset>
       </div>

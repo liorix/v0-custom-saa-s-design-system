@@ -37,44 +37,50 @@ const members = [
   },
 ]
 
-export const Default: Story = {
-  args: {
-    members,
-    onRemoveMember: (id) => console.log(`Remove member ${id}`),
-    onChangeMemberRole: (id, role) => console.log(`Change role for member ${id} to ${role}`),
-    onResendInvite: (id) => console.log(`Resend invite to member ${id}`),
-    className: "w-full max-w-3xl",
-  },
+export const Default = {
+  render: () => (
+    <TeamMembersList
+      members={members}
+      onRemoveMember={(id) => console.log(`Remove member ${id}`)}
+      onChangeMemberRole={(id, role) => console.log(`Change role for member ${id} to ${role}`)}
+      onResendInvite={(id) => console.log(`Resend invite to member ${id}`)}
+      className="w-full max-w-3xl"
+    />
+  ),
 }
 
-export const WithAvatars: Story = {
-  args: {
-    members: members.map((member) => ({
-      ...member,
-      avatarUrl: "/placeholder.svg?height=40&width=40",
-    })),
-    onRemoveMember: (id) => console.log(`Remove member ${id}`),
-    onChangeMemberRole: (id, role) => console.log(`Change role for member ${id} to ${role}`),
-    onResendInvite: (id) => console.log(`Resend invite to member ${id}`),
-    className: "w-full max-w-3xl",
-  },
+export const WithAvatars = {
+  render: () => (
+    <TeamMembersList
+      members={members.map((member) => ({
+        ...member,
+        avatarUrl: "/placeholder.svg?height=40&width=40",
+      }))}
+      onRemoveMember={(id) => console.log(`Remove member ${id}`)}
+      onChangeMemberRole={(id, role) => console.log(`Change role for member ${id} to ${role}`)}
+      onResendInvite={(id) => console.log(`Resend invite to member ${id}`)}
+      className="w-full max-w-3xl"
+    />
+  ),
 }
 
-export const WithInactive: Story = {
-  args: {
-    members: [
-      ...members,
-      {
-        id: "4",
-        name: "Alice Brown",
-        email: "alice@example.com",
-        role: "Member",
-        status: "inactive" as const,
-      },
-    ],
-    onRemoveMember: (id) => console.log(`Remove member ${id}`),
-    onChangeMemberRole: (id, role) => console.log(`Change role for member ${id} to ${role}`),
-    onResendInvite: (id) => console.log(`Resend invite to member ${id}`),
-    className: "w-full max-w-3xl",
-  },
+export const WithInactive = {
+  render: () => (
+    <TeamMembersList
+      members={[
+        ...members,
+        {
+          id: "4",
+          name: "Alice Brown",
+          email: "alice@example.com",
+          role: "Member",
+          status: "inactive" as const,
+        },
+      ]}
+      onRemoveMember={(id) => console.log(`Remove member ${id}`)}
+      onChangeMemberRole={(id, role) => console.log(`Change role for member ${id} to ${role}`)}
+      onResendInvite={(id) => console.log(`Resend invite to member ${id}`)}
+      className="w-full max-w-3xl"
+    />
+  ),
 }

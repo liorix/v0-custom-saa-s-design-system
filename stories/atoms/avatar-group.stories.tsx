@@ -31,43 +31,26 @@ const users = [
   { id: "6", name: "Eva Wilson", avatarUrl: "/placeholder.svg?height=40&width=40" },
 ]
 
-export const Default: Story = {
-  args: {
-    users: users.slice(0, 3),
-  },
+export const Default = {
+  render: () => <AvatarGroup users={users.slice(0, 3)} />,
 }
 
-export const Small: Story = {
-  args: {
-    users: users.slice(0, 3),
-    size: "sm",
-  },
+export const Small = {
+  render: () => <AvatarGroup users={users.slice(0, 3)} size="sm" />,
 }
 
-export const Medium: Story = {
-  args: {
-    users: users.slice(0, 3),
-    size: "md",
-  },
+export const Medium = {
+  render: () => <AvatarGroup users={users.slice(0, 3)} size="md" />,
 }
 
-export const Large: Story = {
-  args: {
-    users: users.slice(0, 3),
-    size: "lg",
-  },
+export const Large = {
+  render: () => <AvatarGroup users={users.slice(0, 3)} size="lg" />,
 }
 
-export const WithOverflow: Story = {
-  args: {
-    users,
-    max: 3,
-  },
+export const WithOverflow = {
+  render: () => <AvatarGroup users={users} max={3} />,
 }
 
-export const NoLimit: Story = {
-  args: {
-    users,
-    max: 10,
-  },
+export const NoLimit = {
+  render: () => <AvatarGroup users={users} max={10} />,
 }

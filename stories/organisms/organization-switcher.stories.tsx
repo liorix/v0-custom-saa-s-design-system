@@ -20,32 +20,38 @@ const organizations = [
   { id: "4", name: "Umbrella Corp" },
 ]
 
-export const Default: Story = {
-  args: {
-    organizations,
-    currentOrganizationId: "1",
-    onOrganizationChange: (organizationId) => console.log(`Selected organization: ${organizationId}`),
-    onCreateOrganization: () => console.log("Create organization clicked"),
-    className: "w-[250px]",
-  },
+export const Default = {
+  render: () => (
+    <OrganizationSwitcher
+      organizations={organizations}
+      currentOrganizationId="1"
+      onOrganizationChange={(organizationId) => console.log(`Selected organization: ${organizationId}`)}
+      onCreateOrganization={() => console.log("Create organization clicked")}
+      className="w-[250px]"
+    />
+  ),
 }
 
-export const NoCurrentOrganization: Story = {
-  args: {
-    organizations,
-    currentOrganizationId: "",
-    onOrganizationChange: (organizationId) => console.log(`Selected organization: ${organizationId}`),
-    onCreateOrganization: () => console.log("Create organization clicked"),
-    className: "w-[250px]",
-  },
+export const NoCurrentOrganization = {
+  render: () => (
+    <OrganizationSwitcher
+      organizations={organizations}
+      currentOrganizationId=""
+      onOrganizationChange={(organizationId) => console.log(`Selected organization: ${organizationId}`)}
+      onCreateOrganization={() => console.log("Create organization clicked")}
+      className="w-[250px]"
+    />
+  ),
 }
 
-export const SingleOrganization: Story = {
-  args: {
-    organizations: [organizations[0]],
-    currentOrganizationId: "1",
-    onOrganizationChange: (organizationId) => console.log(`Selected organization: ${organizationId}`),
-    onCreateOrganization: () => console.log("Create organization clicked"),
-    className: "w-[250px]",
-  },
+export const SingleOrganization = {
+  render: () => (
+    <OrganizationSwitcher
+      organizations={[organizations[0]]}
+      currentOrganizationId="1"
+      onOrganizationChange={(organizationId) => console.log(`Selected organization: ${organizationId}`)}
+      onCreateOrganization={() => console.log("Create organization clicked")}
+      className="w-[250px]"
+    />
+  ),
 }

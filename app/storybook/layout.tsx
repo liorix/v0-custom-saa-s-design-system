@@ -16,6 +16,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
+  SidebarTrigger,
 } from "@/components/ui/sidebar"
 import "../globals.css"
 import "./storybook.css"
@@ -143,7 +144,12 @@ export default function StorybookLayout({
               ))}
             </SidebarContent>
           </Sidebar>
-          <div className="flex-1 overflow-auto">{children}</div>
+          <div className="flex-1 overflow-auto">
+            <div className="p-4 md:hidden">
+              <SidebarTrigger />
+            </div>
+            {children}
+          </div>
         </div>
       </SidebarProvider>
     </div>
