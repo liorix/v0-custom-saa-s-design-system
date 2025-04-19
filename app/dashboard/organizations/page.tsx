@@ -158,9 +158,9 @@ export default function OrganizationsPage() {
         </Dialog>
       </PageHeader>
 
-      <div className="grid gap-4">
+      <div className="grid gap-4 w-full">
         {organizations.map((org) => (
-          <Card key={org.id} className="overflow-hidden">
+          <Card key={org.id} className="w-full overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <div className="flex items-center space-x-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10">

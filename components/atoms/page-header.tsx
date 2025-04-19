@@ -10,17 +10,23 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, children, className }: PageHeaderProps) {
   return (
-    <div
-      className={cn(
-        "flex flex-col space-y-2 pb-4 md:flex-row md:items-center md:justify-between md:space-y-0",
-        className,
-      )}
-    >
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-        {description && <p className="text-muted-foreground">{description}</p>}
+    <div className="w-full -mx-8 mb-8">
+      <div className="border-b w-[calc(100%+4rem)]">
+        <div className="px-8 pb-4">
+          <div
+            className={cn(
+              "flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0 w-full",
+              className,
+            )}
+          >
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+              {description && <p className="text-muted-foreground">{description}</p>}
+            </div>
+            {children && <div className="flex items-center gap-2">{children}</div>}
+          </div>
+        </div>
       </div>
-      {children && <div className="flex items-center gap-2">{children}</div>}
     </div>
   )
 }

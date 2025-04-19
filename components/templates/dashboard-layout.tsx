@@ -35,7 +35,6 @@ import {
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import type { ReactNode } from "react"
-import { ContentContainer } from "./content-container"
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -209,9 +208,11 @@ export function DashboardLayout({
             <SidebarTrigger className="md:hidden" />
             <div className="flex-1" />
           </header>
-          <main className={cn("flex-1 overflow-auto", className)}>
-            <ContentContainer>{children}</ContentContainer>
-          </main>
+          <div className="w-full">
+            <main className={cn("w-full px-8 py-8", className)}>
+              <div className="w-full max-w-none">{children}</div>
+            </main>
+          </div>
         </SidebarInset>
       </div>
     </SidebarProvider>

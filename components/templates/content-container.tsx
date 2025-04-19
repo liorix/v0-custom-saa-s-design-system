@@ -7,9 +7,5 @@ interface ContentContainerProps {
 }
 
 export function ContentContainer({ children, className }: ContentContainerProps) {
-  return (
-    <div className="container py-8">
-      <div className={cn("mx-auto w-full max-w-5xl", className)}>{children}</div>
-    </div>
-  )
+  return <div className={cn("w-full flex-1", className)}>{children}</div>
 }

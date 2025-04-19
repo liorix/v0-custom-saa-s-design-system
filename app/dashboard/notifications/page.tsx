@@ -106,8 +106,8 @@ export default function NotificationsPage() {
         )}
       </PageHeader>
 
-      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList>
+      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="space-y-4 w-full">
+        <TabsList className="w-full justify-start">
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="unread">
             Unread
@@ -120,7 +120,7 @@ export default function NotificationsPage() {
           <TabsTrigger value="read">Read</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="all" className="space-y-4">
+        <TabsContent value="all" className="space-y-4 w-full">
           {filteredNotifications.length > 0 ? (
             <div className="space-y-4">
               {filteredNotifications.map((notification) => (
@@ -147,7 +147,7 @@ export default function NotificationsPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="unread" className="space-y-4">
+        <TabsContent value="unread" className="space-y-4 w-full">
           {filteredNotifications.length > 0 ? (
             <div className="space-y-4">
               {filteredNotifications.map((notification) => (
@@ -174,7 +174,7 @@ export default function NotificationsPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="read" className="space-y-4">
+        <TabsContent value="read" className="space-y-4 w-full">
           {filteredNotifications.length > 0 ? (
             <div className="space-y-4">
               {filteredNotifications.map((notification) => (

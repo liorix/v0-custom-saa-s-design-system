@@ -31,7 +31,7 @@ export default function DashboardPage() {
         </Button>
       </PageHeader>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 w-full">
         <StatCard
           title="Total Users"
           value="2,543"
@@ -56,7 +56,7 @@ export default function DashboardPage() {
         />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 mt-8">
+      <div className="grid gap-4 md:grid-cols-2 mt-8 w-full">
         <div className="rounded-lg border p-6">
           <h3 className="text-lg font-medium mb-4">Recent Activity</h3>
           <div className="space-y-4">
