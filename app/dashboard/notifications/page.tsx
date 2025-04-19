@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Bell, Check } from "lucide-react"
 import { useState } from "react"
-import { ContentContainer } from "@/components/templates/content-container"
 
 interface Notification {
   id: string
@@ -98,112 +97,110 @@ export default function NotificationsPage() {
       onCreateOrganization={() => console.log("Create organization")}
       onSignOut={() => console.log("Sign out")}
     >
-      <ContentContainer>
-        <PageHeader title="Notifications" description="Manage your notifications">
-          {unreadCount > 0 && (
-            <Button variant="outline" onClick={handleMarkAllAsRead}>
-              <Check className="mr-2 h-4 w-4" />
-              Mark all as read
-            </Button>
+      <PageHeader title="Notifications" description="Manage your notifications">
+        {unreadCount > 0 && (
+          <Button variant="outline" onClick={handleMarkAllAsRead}>
+            <Check className="mr-2 h-4 w-4" />
+            Mark all as read
+          </Button>
+        )}
+      </PageHeader>
+
+      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="unread">
+            Unread
+            {unreadCount > 0 && (
+              <span className="ml-2 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+                {unreadCount}
+              </span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="read">Read</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all" className="space-y-4">
+          {filteredNotifications.length > 0 ? (
+            <div className="space-y-4">
+              {filteredNotifications.map((notification) => (
+                <NotificationItem
+                  key={notification.id}
+                  id={notification.id}
+                  title={notification.title}
+                  description={notification.description}
+                  time={notification.time}
+                  read={notification.read}
+                  user={notification.user}
+                  onDismiss={handleDismiss}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
+                <Bell className="h-10 w-10 text-muted-foreground" />
+              </div>
+              <h3 className="mt-4 text-lg font-semibold">No notifications</h3>
+              <p className="mt-2 text-sm text-muted-foreground">You're all caught up!</p>
+            </div>
           )}
-        </PageHeader>
+        </TabsContent>
 
-        <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="unread">
-              Unread
-              {unreadCount > 0 && (
-                <span className="ml-2 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
-                  {unreadCount}
-                </span>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="read">Read</TabsTrigger>
-          </TabsList>
+        <TabsContent value="unread" className="space-y-4">
+          {filteredNotifications.length > 0 ? (
+            <div className="space-y-4">
+              {filteredNotifications.map((notification) => (
+                <NotificationItem
+                  key={notification.id}
+                  id={notification.id}
+                  title={notification.title}
+                  description={notification.description}
+                  time={notification.time}
+                  read={notification.read}
+                  user={notification.user}
+                  onDismiss={handleDismiss}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
+                <Bell className="h-10 w-10 text-muted-foreground" />
+              </div>
+              <h3 className="mt-4 text-lg font-semibold">No unread notifications</h3>
+              <p className="mt-2 text-sm text-muted-foreground">You're all caught up!</p>
+            </div>
+          )}
+        </TabsContent>
 
-          <TabsContent value="all" className="space-y-4">
-            {filteredNotifications.length > 0 ? (
-              <div className="space-y-4">
-                {filteredNotifications.map((notification) => (
-                  <NotificationItem
-                    key={notification.id}
-                    id={notification.id}
-                    title={notification.title}
-                    description={notification.description}
-                    time={notification.time}
-                    read={notification.read}
-                    user={notification.user}
-                    onDismiss={handleDismiss}
-                  />
-                ))}
+        <TabsContent value="read" className="space-y-4">
+          {filteredNotifications.length > 0 ? (
+            <div className="space-y-4">
+              {filteredNotifications.map((notification) => (
+                <NotificationItem
+                  key={notification.id}
+                  id={notification.id}
+                  title={notification.title}
+                  description={notification.description}
+                  time={notification.time}
+                  read={notification.read}
+                  user={notification.user}
+                  onDismiss={handleDismiss}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
+                <Bell className="h-10 w-10 text-muted-foreground" />
               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
-                  <Bell className="h-10 w-10 text-muted-foreground" />
-                </div>
-                <h3 className="mt-4 text-lg font-semibold">No notifications</h3>
-                <p className="mt-2 text-sm text-muted-foreground">You're all caught up!</p>
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="unread" className="space-y-4">
-            {filteredNotifications.length > 0 ? (
-              <div className="space-y-4">
-                {filteredNotifications.map((notification) => (
-                  <NotificationItem
-                    key={notification.id}
-                    id={notification.id}
-                    title={notification.title}
-                    description={notification.description}
-                    time={notification.time}
-                    read={notification.read}
-                    user={notification.user}
-                    onDismiss={handleDismiss}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
-                  <Bell className="h-10 w-10 text-muted-foreground" />
-                </div>
-                <h3 className="mt-4 text-lg font-semibold">No unread notifications</h3>
-                <p className="mt-2 text-sm text-muted-foreground">You're all caught up!</p>
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="read" className="space-y-4">
-            {filteredNotifications.length > 0 ? (
-              <div className="space-y-4">
-                {filteredNotifications.map((notification) => (
-                  <NotificationItem
-                    key={notification.id}
-                    id={notification.id}
-                    title={notification.title}
-                    description={notification.description}
-                    time={notification.time}
-                    read={notification.read}
-                    user={notification.user}
-                    onDismiss={handleDismiss}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
-                  <Bell className="h-10 w-10 text-muted-foreground" />
-                </div>
-                <h3 className="mt-4 text-lg font-semibold">No read notifications</h3>
-                <p className="mt-2 text-sm text-muted-foreground">You haven't read any notifications yet</p>
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-      </ContentContainer>
+              <h3 className="mt-4 text-lg font-semibold">No read notifications</h3>
+              <p className="mt-2 text-sm text-muted-foreground">You haven't read any notifications yet</p>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </DashboardLayout>
   )
 }

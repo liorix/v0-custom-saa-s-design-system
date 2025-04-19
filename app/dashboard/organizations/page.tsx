@@ -35,7 +35,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Building2, MoreHorizontal, Plus, Users } from "lucide-react"
 import { useState } from "react"
-import { ContentContainer } from "@/components/templates/content-container"
 
 interface Organization {
   id: string
@@ -125,158 +124,156 @@ export default function OrganizationsPage() {
       onCreateOrganization={() => setIsAddDialogOpen(true)}
       onSignOut={() => console.log("Sign out")}
     >
-      <ContentContainer>
-        <PageHeader title="Organizations" description="Manage your organizations">
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Organization
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create Organization</DialogTitle>
-                <DialogDescription>Add a new organization to manage products and teams.</DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Organization Name</Label>
-                  <Input
-                    id="name"
-                    value={newOrgName}
-                    onChange={(e) => setNewOrgName(e.target.value)}
-                    placeholder="Enter organization name"
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleAddOrganization}>Create</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </PageHeader>
-
-        <div className="grid gap-4">
-          {organizations.map((org) => (
-            <Card key={org.id} className="overflow-hidden">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="flex items-center space-x-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10">
-                    <Building2 className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <CardTitle>{org.name}</CardTitle>
-                    <CardDescription>Created on {formatDate(org.createdAt)}</CardDescription>
-                  </div>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
-                      <span className="sr-only">Actions</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => {
-                        setEditingOrg(org)
-                        setIsEditDialogOpen(true)
-                      }}
-                    >
-                      Edit Organization
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => {
-                        setDeleteOrgId(org.id)
-                        setIsDeleteDialogOpen(true)
-                      }}
-                      className="text-destructive focus:text-destructive"
-                    >
-                      Delete Organization
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">{org.members} members</span>
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Your role: <span className="font-medium">{org.role}</span>
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter className="border-t bg-muted/50 px-6 py-3">
-                <div className="flex justify-between w-full">
-                  <Button variant="ghost" size="sm" asChild>
-                    <a href={`/dashboard/team?org=${org.id}`}>Manage Team</a>
-                  </Button>
-                  <Button size="sm" asChild>
-                    <a href={`/dashboard?org=${org.id}`}>View Dashboard</a>
-                  </Button>
-                </div>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-
-        {/* Edit Organization Dialog */}
-        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+      <PageHeader title="Organizations" description="Manage your organizations">
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Organization
+            </Button>
+          </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Edit Organization</DialogTitle>
-              <DialogDescription>Update your organization details.</DialogDescription>
+              <DialogTitle>Create Organization</DialogTitle>
+              <DialogDescription>Add a new organization to manage products and teams.</DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="edit-name">Organization Name</Label>
+                <Label htmlFor="name">Organization Name</Label>
                 <Input
-                  id="edit-name"
-                  value={editingOrg?.name || ""}
-                  onChange={(e) => setEditingOrg(editingOrg ? { ...editingOrg, name: e.target.value } : null)}
+                  id="name"
+                  value={newOrgName}
+                  onChange={(e) => setNewOrgName(e.target.value)}
                   placeholder="Enter organization name"
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleEditOrganization}>Save Changes</Button>
+              <Button onClick={handleAddOrganization}>Create</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
+      </PageHeader>
 
-        {/* Delete Organization Dialog */}
-        <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the organization and remove all associated
-                data.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleDeleteOrganization}
-                className="bg-destructive text-destructive-foreground"
-              >
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </ContentContainer>
+      <div className="grid gap-4">
+        {organizations.map((org) => (
+          <Card key={org.id} className="overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <div className="flex items-center space-x-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10">
+                  <Building2 className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle>{org.name}</CardTitle>
+                  <CardDescription>Created on {formatDate(org.createdAt)}</CardDescription>
+                </div>
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <MoreHorizontal className="h-4 w-4" />
+                    <span className="sr-only">Actions</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setEditingOrg(org)
+                      setIsEditDialogOpen(true)
+                    }}
+                  >
+                    Edit Organization
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setDeleteOrgId(org.id)
+                      setIsDeleteDialogOpen(true)
+                    }}
+                    className="text-destructive focus:text-destructive"
+                  >
+                    Delete Organization
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">{org.members} members</span>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Your role: <span className="font-medium">{org.role}</span>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="border-t bg-muted/50 px-6 py-3">
+              <div className="flex justify-between w-full">
+                <Button variant="ghost" size="sm" asChild>
+                  <a href={`/dashboard/team?org=${org.id}`}>Manage Team</a>
+                </Button>
+                <Button size="sm" asChild>
+                  <a href={`/dashboard?org=${org.id}`}>View Dashboard</a>
+                </Button>
+              </div>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+
+      {/* Edit Organization Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Organization</DialogTitle>
+            <DialogDescription>Update your organization details.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="edit-name">Organization Name</Label>
+              <Input
+                id="edit-name"
+                value={editingOrg?.name || ""}
+                onChange={(e) => setEditingOrg(editingOrg ? { ...editingOrg, name: e.target.value } : null)}
+                placeholder="Enter organization name"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleEditOrganization}>Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Organization Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the organization and remove all associated
+              data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteOrganization}
+              className="bg-destructive text-destructive-foreground"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DashboardLayout>
   )
 }

@@ -35,6 +35,7 @@ import {
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import type { ReactNode } from "react"
+import { ContentContainer } from "./content-container"
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -57,7 +58,6 @@ export function DashboardLayout({
 }: DashboardLayoutProps) {
   const pathname = usePathname()
 
-  // Verify the Analytics route is correctly defined in mainNavItems
   const mainNavItems = [
     {
       title: "Dashboard",
@@ -71,7 +71,6 @@ export function DashboardLayout({
     },
   ]
 
-  // Verify the Organizations route is correctly defined in teamNavItems
   const teamNavItems = [
     {
       title: "Team Members",
@@ -188,7 +187,7 @@ export function DashboardLayout({
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Notifications">
+                <SidebarMenuButton asChild tooltip="Notifications" isActive={pathname === "/dashboard/notifications"}>
                   <Link href="/dashboard/notifications">
                     <Bell />
                     <span>Notifications</span>
@@ -210,7 +209,9 @@ export function DashboardLayout({
             <SidebarTrigger className="md:hidden" />
             <div className="flex-1" />
           </header>
-          <main className={cn("flex-1 overflow-auto", className)}>{children}</main>
+          <main className={cn("flex-1 overflow-auto", className)}>
+            <ContentContainer>{children}</ContentContainer>
+          </main>
         </SidebarInset>
       </div>
     </SidebarProvider>

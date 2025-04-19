@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Users, CreditCard, ArrowUpRight, ArrowDownRight, Calendar, Download } from "lucide-react"
 import { useState } from "react"
-import { ContentContainer } from "@/components/templates/content-container"
 
 // Simple component for a line chart visualization
 function LineChart({ className }: { className?: string }) {
@@ -92,184 +91,182 @@ export default function AnalyticsPage() {
       onCreateOrganization={() => console.log("Create organization")}
       onSignOut={() => console.log("Sign out")}
     >
-      <ContentContainer>
-        <PageHeader title="Analytics" description="Overview of your business performance">
-          <div className="flex gap-2">
-            <Button variant="outline">
-              <Calendar className="mr-2 h-4 w-4" />
-              Last 30 days
-            </Button>
-            <Button variant="outline">
-              <Download className="mr-2 h-4 w-4" />
-              Export
-            </Button>
-          </div>
-        </PageHeader>
-
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <StatCard
-            title="Total Users"
-            value="2,543"
-            description="Last 30 days"
-            icon={Users}
-            trend={{ value: 12.5, isPositive: true }}
-          />
-          <StatCard
-            title="Revenue"
-            value="$45,231.89"
-            description="Last 30 days"
-            icon={CreditCard}
-            trend={{ value: 8.2, isPositive: true }}
-          />
-          <StatCard
-            title="Conversion Rate"
-            value="3.2%"
-            description="Last 30 days"
-            icon={ArrowUpRight}
-            trend={{ value: 1.1, isPositive: true }}
-          />
-          <StatCard
-            title="Churn Rate"
-            value="0.8%"
-            description="Last 30 days"
-            icon={ArrowDownRight}
-            trend={{ value: 0.3, isPositive: false }}
-          />
+      <PageHeader title="Analytics" description="Overview of your business performance">
+        <div className="flex gap-2">
+          <Button variant="outline">
+            <Calendar className="mr-2 h-4 w-4" />
+            Last 30 days
+          </Button>
+          <Button variant="outline">
+            <Download className="mr-2 h-4 w-4" />
+            Export
+          </Button>
         </div>
+      </PageHeader>
 
-        <Tabs defaultValue="overview" className="space-y-4 mt-8">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
-            <TabsTrigger value="revenue">Revenue</TabsTrigger>
-            <TabsTrigger value="engagement">Engagement</TabsTrigger>
-          </TabsList>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="Total Users"
+          value="2,543"
+          description="Last 30 days"
+          icon={Users}
+          trend={{ value: 12.5, isPositive: true }}
+        />
+        <StatCard
+          title="Revenue"
+          value="$45,231.89"
+          description="Last 30 days"
+          icon={CreditCard}
+          trend={{ value: 8.2, isPositive: true }}
+        />
+        <StatCard
+          title="Conversion Rate"
+          value="3.2%"
+          description="Last 30 days"
+          icon={ArrowUpRight}
+          trend={{ value: 1.1, isPositive: true }}
+        />
+        <StatCard
+          title="Churn Rate"
+          value="0.8%"
+          description="Last 30 days"
+          icon={ArrowDownRight}
+          trend={{ value: 0.3, isPositive: false }}
+        />
+      </div>
 
-          <TabsContent value="overview" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Revenue Over Time</CardTitle>
-                  <CardDescription>Monthly revenue for the past year</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <LineChart />
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>User Acquisition</CardTitle>
-                  <CardDescription>New users by source</CardDescription>
-                </CardHeader>
-                <CardContent className="flex justify-between">
-                  <PieChart className="w-1/2" />
-                  <div className="w-1/2 space-y-4 pl-4">
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-sm">
-                        <span>Organic</span>
-                        <span className="font-medium">75%</span>
-                      </div>
-                      <div className="h-2 w-full rounded-full bg-muted">
-                        <div className="h-full w-[75%] rounded-full bg-primary" />
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-sm">
-                        <span>Referral</span>
-                        <span className="font-medium">15%</span>
-                      </div>
-                      <div className="h-2 w-full rounded-full bg-muted">
-                        <div className="h-full w-[15%] rounded-full bg-primary/70" />
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-sm">
-                        <span>Social</span>
-                        <span className="font-medium">10%</span>
-                      </div>
-                      <div className="h-2 w-full rounded-full bg-muted">
-                        <div className="h-full w-[10%] rounded-full bg-primary/40" />
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+      <Tabs defaultValue="overview" className="space-y-4 mt-8">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="revenue">Revenue</TabsTrigger>
+          <TabsTrigger value="engagement">Engagement</TabsTrigger>
+        </TabsList>
 
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>Key Performance Indicators</CardTitle>
-                <CardDescription>Comparing current period to previous period</CardDescription>
+                <CardTitle>Revenue Over Time</CardTitle>
+                <CardDescription>Monthly revenue for the past year</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-4 md:grid-cols-3">
+                <LineChart />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>User Acquisition</CardTitle>
+                <CardDescription>New users by source</CardDescription>
+              </CardHeader>
+              <CardContent className="flex justify-between">
+                <PieChart className="w-1/2" />
+                <div className="w-1/2 space-y-4 pl-4">
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">Average Order Value</p>
-                    <div className="flex items-baseline gap-2">
-                      <p className="text-2xl font-bold">$45.82</p>
-                      <p className="text-sm text-green-500">+5.2%</p>
+                    <div className="flex justify-between text-sm">
+                      <span>Organic</span>
+                      <span className="font-medium">75%</span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-muted">
+                      <div className="h-full w-[75%] rounded-full bg-primary" />
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">Customer Lifetime Value</p>
-                    <div className="flex items-baseline gap-2">
-                      <p className="text-2xl font-bold">$580.25</p>
-                      <p className="text-sm text-green-500">+12.3%</p>
+                    <div className="flex justify-between text-sm">
+                      <span>Referral</span>
+                      <span className="font-medium">15%</span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-muted">
+                      <div className="h-full w-[15%] rounded-full bg-primary/70" />
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">Monthly Active Users</p>
-                    <div className="flex items-baseline gap-2">
-                      <p className="text-2xl font-bold">1,245</p>
-                      <p className="text-sm text-green-500">+8.7%</p>
+                    <div className="flex justify-between text-sm">
+                      <span>Social</span>
+                      <span className="font-medium">10%</span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-muted">
+                      <div className="h-full w-[10%] rounded-full bg-primary/40" />
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>
 
-          <TabsContent value="users">
-            <Card>
-              <CardHeader>
-                <CardTitle>User Analytics</CardTitle>
-                <CardDescription>Detailed user metrics and demographics</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">Select the "Users" tab to view detailed user analytics.</p>
-              </CardContent>
-            </Card>
-          </TabsContent>
+          <Card>
+            <CardHeader>
+              <CardTitle>Key Performance Indicators</CardTitle>
+              <CardDescription>Comparing current period to previous period</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">Average Order Value</p>
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-2xl font-bold">$45.82</p>
+                    <p className="text-sm text-green-500">+5.2%</p>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">Customer Lifetime Value</p>
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-2xl font-bold">$580.25</p>
+                    <p className="text-sm text-green-500">+12.3%</p>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">Monthly Active Users</p>
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-2xl font-bold">1,245</p>
+                    <p className="text-sm text-green-500">+8.7%</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          <TabsContent value="revenue">
-            <Card>
-              <CardHeader>
-                <CardTitle>Revenue Analytics</CardTitle>
-                <CardDescription>Detailed revenue metrics and trends</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Select the "Revenue" tab to view detailed revenue analytics.
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
+        <TabsContent value="users">
+          <Card>
+            <CardHeader>
+              <CardTitle>User Analytics</CardTitle>
+              <CardDescription>Detailed user metrics and demographics</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">Select the "Users" tab to view detailed user analytics.</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          <TabsContent value="engagement">
-            <Card>
-              <CardHeader>
-                <CardTitle>Engagement Analytics</CardTitle>
-                <CardDescription>User engagement metrics and behavior</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Select the "Engagement" tab to view detailed engagement analytics.
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </ContentContainer>
+        <TabsContent value="revenue">
+          <Card>
+            <CardHeader>
+              <CardTitle>Revenue Analytics</CardTitle>
+              <CardDescription>Detailed revenue metrics and trends</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Select the "Revenue" tab to view detailed revenue analytics.
+              </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="engagement">
+          <Card>
+            <CardHeader>
+              <CardTitle>Engagement Analytics</CardTitle>
+              <CardDescription>User engagement metrics and behavior</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Select the "Engagement" tab to view detailed engagement analytics.
+              </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </DashboardLayout>
   )
 }

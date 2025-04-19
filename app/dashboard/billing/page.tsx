@@ -6,7 +6,6 @@ import { DashboardLayout } from "@/components/templates/dashboard-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState } from "react"
-import { ContentContainer } from "@/components/templates/content-container"
 
 export default function BillingPage() {
   const [currentOrganizationId, setCurrentOrganizationId] = useState("1")
@@ -77,66 +76,64 @@ export default function BillingPage() {
       onCreateOrganization={() => console.log("Create organization")}
       onSignOut={() => console.log("Sign out")}
     >
-      <ContentContainer>
-        <PageHeader title="Billing" description="Manage your subscription and billing information" />
+      <PageHeader title="Billing" description="Manage your subscription and billing information" />
 
-        <Tabs defaultValue="plans" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="plans">Plans</TabsTrigger>
-            <TabsTrigger value="invoices">Invoices</TabsTrigger>
-            <TabsTrigger value="payment">Payment Methods</TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="plans" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="plans">Plans</TabsTrigger>
+          <TabsTrigger value="invoices">Invoices</TabsTrigger>
+          <TabsTrigger value="payment">Payment Methods</TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="plans" className="space-y-4">
-            <div className="grid gap-6 md:grid-cols-3">
-              {plans.map((plan) => (
-                <BillingPlanCard
-                  key={plan.name}
-                  name={plan.name}
-                  description={plan.description}
-                  price={plan.price}
-                  features={plan.features}
-                  popular={plan.popular}
-                  current={plan.current}
-                  onSelect={() => console.log(`Selected plan: ${plan.name}`)}
-                />
-              ))}
-            </div>
-          </TabsContent>
+        <TabsContent value="plans" className="space-y-4">
+          <div className="grid gap-6 md:grid-cols-3">
+            {plans.map((plan) => (
+              <BillingPlanCard
+                key={plan.name}
+                name={plan.name}
+                description={plan.description}
+                price={plan.price}
+                features={plan.features}
+                popular={plan.popular}
+                current={plan.current}
+                onSelect={() => console.log(`Selected plan: ${plan.name}`)}
+              />
+            ))}
+          </div>
+        </TabsContent>
 
-          <TabsContent value="invoices" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Invoices</CardTitle>
-                <CardDescription>View and download your invoices</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="rounded-md border">
-                  <div className="p-4">
-                    <p className="text-sm text-muted-foreground">No invoices found.</p>
-                  </div>
+        <TabsContent value="invoices" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Invoices</CardTitle>
+              <CardDescription>View and download your invoices</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <div className="p-4">
+                  <p className="text-sm text-muted-foreground">No invoices found.</p>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          <TabsContent value="payment" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment Methods</CardTitle>
-                <CardDescription>Manage your payment methods</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="rounded-md border">
-                  <div className="p-4">
-                    <p className="text-sm text-muted-foreground">No payment methods found.</p>
-                  </div>
+        <TabsContent value="payment" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Payment Methods</CardTitle>
+              <CardDescription>Manage your payment methods</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <div className="p-4">
+                  <p className="text-sm text-muted-foreground">No payment methods found.</p>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </ContentContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </DashboardLayout>
   )
 }
