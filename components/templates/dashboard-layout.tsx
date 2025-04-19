@@ -14,9 +14,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
   SidebarProvider,
   SidebarRail,
   SidebarSeparator,
@@ -32,17 +29,12 @@ import {
   Home,
   LayoutDashboard,
   LogOut,
-  Mail,
-  MessageSquare,
   Settings,
-  ShoppingCart,
   Users,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import type { ReactNode } from "react"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { ChevronDown } from "lucide-react"
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -79,6 +71,7 @@ export function DashboardLayout({
     },
   ]
 
+  // Verify the Organizations route is correctly defined in teamNavItems
   const teamNavItems = [
     {
       title: "Team Members",
@@ -102,42 +95,6 @@ export function DashboardLayout({
       title: "Invoices",
       href: "/dashboard/billing/invoices",
       icon: FileText,
-    },
-  ]
-
-  const communicationNavItems = [
-    {
-      title: "Messages",
-      href: "/dashboard/messages",
-      icon: MessageSquare,
-      badge: 5,
-    },
-    {
-      title: "Email",
-      href: "/dashboard/email",
-      icon: Mail,
-    },
-  ]
-
-  const productNavItems = [
-    {
-      title: "Products",
-      href: "/dashboard/products",
-      icon: ShoppingCart,
-      subItems: [
-        {
-          title: "All Products",
-          href: "/dashboard/products",
-        },
-        {
-          title: "Add Product",
-          href: "/dashboard/products/new",
-        },
-        {
-          title: "Categories",
-          href: "/dashboard/products/categories",
-        },
-      ],
     },
   ]
 
@@ -215,67 +172,6 @@ export function DashboardLayout({
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-
-            <SidebarSeparator />
-
-            <SidebarGroup>
-              <SidebarGroupLabel>Communication</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {communicationNavItems.map((item) => (
-                    <SidebarMenuItem key={item.href}>
-                      <SidebarMenuButton asChild isActive={pathname === item.href} tooltip={item.title}>
-                        <Link href={item.href}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                          {item.badge && (
-                            <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
-                              {item.badge}
-                            </span>
-                          )}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-
-            <SidebarSeparator />
-
-            <SidebarGroup>
-              <SidebarGroupLabel>Products</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {productNavItems.map((item) => (
-                    <Collapsible key={item.href} className="w-full">
-                      <SidebarMenuItem>
-                        <CollapsibleTrigger className="w-full" asChild>
-                          <SidebarMenuButton tooltip={item.title}>
-                            <item.icon />
-                            <span>{item.title}</span>
-                            <ChevronDown className="ml-auto h-4 w-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-                          </SidebarMenuButton>
-                        </CollapsibleTrigger>
-                        {item.subItems && (
-                          <CollapsibleContent>
-                            <SidebarMenuSub>
-                              {item.subItems.map((subItem) => (
-                                <SidebarMenuSubItem key={subItem.href}>
-                                  <SidebarMenuSubButton asChild isActive={pathname === subItem.href}>
-                                    <Link href={subItem.href}>{subItem.title}</Link>
-                                  </SidebarMenuSubButton>
-                                </SidebarMenuSubItem>
-                              ))}
-                            </SidebarMenuSub>
-                          </CollapsibleContent>
-                        )}
-                      </SidebarMenuItem>
-                    </Collapsible>
                   ))}
                 </SidebarMenu>
               </SidebarGroupContent>
