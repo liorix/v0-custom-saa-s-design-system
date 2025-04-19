@@ -65,6 +65,7 @@ export function DashboardLayout({
 }: DashboardLayoutProps) {
   const pathname = usePathname()
 
+  // Verify the Analytics route is correctly defined in mainNavItems
   const mainNavItems = [
     {
       title: "Dashboard",
