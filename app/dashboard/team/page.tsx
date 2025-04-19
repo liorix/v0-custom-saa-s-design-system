@@ -3,6 +3,7 @@
 import { PageHeader } from "@/components/atoms/page-header"
 import { TeamMembersList } from "@/components/organisms/team-members-list"
 import { DashboardLayout } from "@/components/templates/dashboard-layout"
+import { ContentWrapper } from "@/components/templates/content-wrapper"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { useState } from "react"
@@ -57,12 +58,14 @@ export default function TeamPage() {
         </Button>
       </PageHeader>
 
-      <TeamMembersList
-        members={members}
-        onRemoveMember={(id) => console.log(`Remove member ${id}`)}
-        onChangeMemberRole={(id, role) => console.log(`Change role for member ${id} to ${role}`)}
-        onResendInvite={(id) => console.log(`Resend invite to member ${id}`)}
-      />
+      <ContentWrapper>
+        <TeamMembersList
+          members={members}
+          onRemoveMember={(id) => console.log(`Remove member ${id}`)}
+          onChangeMemberRole={(id, role) => console.log(`Change role for member ${id} to ${role}`)}
+          onResendInvite={(id) => console.log(`Resend invite to member ${id}`)}
+        />
+      </ContentWrapper>
     </DashboardLayout>
   )
 }

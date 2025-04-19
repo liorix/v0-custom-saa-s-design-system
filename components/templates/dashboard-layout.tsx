@@ -2,23 +2,6 @@
 
 import { Logo } from "@/components/atoms/logo"
 import { OrganizationSwitcher } from "@/components/organisms/organization-switcher"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarRail,
-  SidebarSeparator,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import {
   BarChart3,
@@ -97,124 +80,142 @@ export function DashboardLayout({
   ]
 
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen">
-        <Sidebar>
-          <SidebarHeader>
-            <div className="flex items-center gap-2 px-4 py-2">
+    <div className="flex h-screen w-full overflow-hidden">
+      {/* Sidebar */}
+      <div className="hidden md:block w-64 border-r shrink-0">
+        <div className="flex h-full flex-col">
+          {/* Sidebar Header */}
+          <div className="border-b p-4">
+            <div className="flex items-center gap-2 mb-4">
               <Link href="/dashboard">
                 <Logo icon={Home} size="sm" />
               </Link>
             </div>
-            <div className="px-2 py-2">
-              <OrganizationSwitcher
-                organizations={organizations}
-                currentOrganizationId={currentOrganizationId}
-                onOrganizationChange={onOrganizationChange}
-                onCreateOrganization={onCreateOrganization}
-                className="w-full"
-              />
-            </div>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarGroup>
-              <SidebarGroupLabel>Overview</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {mainNavItems.map((item) => (
-                    <SidebarMenuItem key={item.href}>
-                      <SidebarMenuButton asChild isActive={pathname === item.href} tooltip={item.title}>
-                        <Link href={item.href}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-
-            <SidebarSeparator />
-
-            <SidebarGroup>
-              <SidebarGroupLabel>Team</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {teamNavItems.map((item) => (
-                    <SidebarMenuItem key={item.href}>
-                      <SidebarMenuButton asChild isActive={pathname === item.href} tooltip={item.title}>
-                        <Link href={item.href}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-
-            <SidebarSeparator />
-
-            <SidebarGroup>
-              <SidebarGroupLabel>Billing</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {billingNavItems.map((item) => (
-                    <SidebarMenuItem key={item.href}>
-                      <SidebarMenuButton asChild isActive={pathname === item.href} tooltip={item.title}>
-                        <Link href={item.href}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </SidebarContent>
-          <SidebarFooter>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={pathname === "/dashboard/settings"} tooltip="Settings">
-                  <Link href="/dashboard/settings">
-                    <Settings />
-                    <span>Settings</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Notifications" isActive={pathname === "/dashboard/notifications"}>
-                  <Link href="/dashboard/notifications">
-                    <Bell />
-                    <span>Notifications</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={onSignOut} tooltip="Sign out">
-                  <LogOut />
-                  <span>Sign out</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarFooter>
-          <SidebarRail />
-        </Sidebar>
-        <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-            <SidebarTrigger className="md:hidden" />
-            <div className="flex-1" />
-          </header>
-          <div className="w-full">
-            <main className={cn("w-full px-8 py-8", className)}>
-              <div className="w-full max-w-none">{children}</div>
-            </main>
+            <OrganizationSwitcher
+              organizations={organizations}
+              currentOrganizationId={currentOrganizationId}
+              onOrganizationChange={onOrganizationChange}
+              onCreateOrganization={onCreateOrganization}
+              className="w-full"
+            />
           </div>
-        </SidebarInset>
+
+          {/* Sidebar Content */}
+          <div className="flex-1 overflow-auto py-2">
+            <div className="px-3 py-2">
+              <h2 className="mb-2 px-4 text-xs font-semibold text-muted-foreground">Overview</h2>
+              <div className="space-y-1">
+                {mainNavItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium",
+                      pathname === item.href ? "bg-accent text-accent-foreground" : "hover:bg-accent/50",
+                    )}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    <span>{item.title}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div className="px-3 py-2">
+              <h2 className="mb-2 px-4 text-xs font-semibold text-muted-foreground">Team</h2>
+              <div className="space-y-1">
+                {teamNavItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium",
+                      pathname === item.href ? "bg-accent text-accent-foreground" : "hover:bg-accent/50",
+                    )}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    <span>{item.title}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div className="px-3 py-2">
+              <h2 className="mb-2 px-4 text-xs font-semibold text-muted-foreground">Billing</h2>
+              <div className="space-y-1">
+                {billingNavItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium",
+                      pathname === item.href ? "bg-accent text-accent-foreground" : "hover:bg-accent/50",
+                    )}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    <span>{item.title}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar Footer */}
+          <div className="border-t p-4">
+            <div className="space-y-1">
+              <Link
+                href="/dashboard/settings"
+                className={cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium",
+                  pathname === "/dashboard/settings" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50",
+                )}
+              >
+                <Settings className="h-4 w-4" />
+                <span>Settings</span>
+              </Link>
+              <Link
+                href="/dashboard/notifications"
+                className={cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium",
+                  pathname === "/dashboard/notifications" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50",
+                )}
+              >
+                <Bell className="h-4 w-4" />
+                <span>Notifications</span>
+              </Link>
+              <button
+                onClick={onSignOut}
+                className="w-full flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent/50"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Sign out</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    </SidebarProvider>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Mobile Header */}
+        <header className="border-b h-16 flex items-center px-4 md:hidden">
+          <button className="mr-2">
+            <LayoutDashboard className="h-6 w-6" />
+          </button>
+          <div className="flex-1">
+            <Logo icon={Home} size="sm" />
+          </div>
+        </header>
+
+        {/* Content Area */}
+        <main className="flex-1 overflow-auto">
+          {/* Page header is rendered inside children */}
+          {children}
+
+          {/* Content wrapper with consistent padding */}
+          <div className="content-wrapper">{/* Children content is rendered here */}</div>
+        </main>
+      </div>
+    </div>
   )
 }

@@ -2,6 +2,7 @@
 
 import { PageHeader } from "@/components/atoms/page-header"
 import { DashboardLayout } from "@/components/templates/dashboard-layout"
+import { ContentWrapper } from "@/components/templates/content-wrapper"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -158,73 +159,75 @@ export default function OrganizationsPage() {
         </Dialog>
       </PageHeader>
 
-      <div className="grid gap-4 w-full">
-        {organizations.map((org) => (
-          <Card key={org.id} className="w-full overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <div className="flex items-center space-x-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10">
-                  <Building2 className="h-5 w-5 text-primary" />
+      <ContentWrapper>
+        <div className="grid gap-6">
+          {organizations.map((org) => (
+            <Card key={org.id} className="w-full">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <div className="flex items-center space-x-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10">
+                    <Building2 className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle>{org.name}</CardTitle>
+                    <CardDescription>Created on {formatDate(org.createdAt)}</CardDescription>
+                  </div>
                 </div>
-                <div>
-                  <CardTitle>{org.name}</CardTitle>
-                  <CardDescription>Created on {formatDate(org.createdAt)}</CardDescription>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreHorizontal className="h-4 w-4" />
+                      <span className="sr-only">Actions</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setEditingOrg(org)
+                        setIsEditDialogOpen(true)
+                      }}
+                    >
+                      Edit Organization
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setDeleteOrgId(org.id)
+                        setIsDeleteDialogOpen(true)
+                      }}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      Delete Organization
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">{org.members} members</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Your role: <span className="font-medium">{org.role}</span>
+                  </div>
                 </div>
-              </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <MoreHorizontal className="h-4 w-4" />
-                    <span className="sr-only">Actions</span>
+              </CardContent>
+              <CardFooter className="border-t bg-muted/50 px-6 py-3">
+                <div className="flex justify-between w-full">
+                  <Button variant="ghost" size="sm" asChild>
+                    <a href={`/dashboard/team?org=${org.id}`}>Manage Team</a>
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setEditingOrg(org)
-                      setIsEditDialogOpen(true)
-                    }}
-                  >
-                    Edit Organization
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setDeleteOrgId(org.id)
-                      setIsDeleteDialogOpen(true)
-                    }}
-                    className="text-destructive focus:text-destructive"
-                  >
-                    Delete Organization
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">{org.members} members</span>
+                  <Button size="sm" asChild>
+                    <a href={`/dashboard?org=${org.id}`}>View Dashboard</a>
+                  </Button>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  Your role: <span className="font-medium">{org.role}</span>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="border-t bg-muted/50 px-6 py-3">
-              <div className="flex justify-between w-full">
-                <Button variant="ghost" size="sm" asChild>
-                  <a href={`/dashboard/team?org=${org.id}`}>Manage Team</a>
-                </Button>
-                <Button size="sm" asChild>
-                  <a href={`/dashboard?org=${org.id}`}>View Dashboard</a>
-                </Button>
-              </div>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </ContentWrapper>
 
       {/* Edit Organization Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
