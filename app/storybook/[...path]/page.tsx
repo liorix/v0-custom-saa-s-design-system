@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useParams, notFound, useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -127,95 +127,95 @@ export default function StoryPage() {
     }
   }, [params])
 
-  useEffect(() => {
-    async function loadStory() {
-      if (!hasInitialParams) {
-        setIsLoading(false)
-        return
-      }
-
-      const [category, component, variantFromUrl] = params.path
-
-      // Check if the category and component exist in our map
-      if (
-        !storyMap[category as keyof typeof storyMap] ||
-        !storyMap[category as keyof typeof storyMap].includes(component)
-      ) {
-        return notFound()
-      }
-
-      try {
-        // Create a cache key
-        const cacheKey = `${category}/${component}`
-
-        // Use cached module if available
-        let storyModule
-        if (storyModuleCache[cacheKey]) {
-          storyModule = storyModuleCache[cacheKey]
-        } else {
-          // Use the explicit import function from our mapping
-          const importFn = storyImports[category as keyof typeof storyImports]?.[component as any]
-
-          if (!importFn) {
-            throw new Error(`Import function not found for ${category}/${component}`)
-          }
-
-          storyModule = await importFn()
-          // Cache the module
-          storyModuleCache[cacheKey] = storyModule
-        }
-
-        // Get all available story variants
-        const variants = Object.keys(storyModule).filter(
-          (key) => key !== "default" && typeof storyModule[key] === "object",
-        )
-
-        if (variants.length === 0) {
-          throw new Error(`No story variants found for ${category}/${component}`)
-        }
-
-        setAvailableVariants(variants)
-
-        // Set the current story variant - use the one from URL if provided, otherwise use the first available variant
-        const selectedVariant = variantFromUrl || variants[0]
-        setStoryVariant(selectedVariant)
-
-        // Set the story title
-        setStoryTitle(`${component.charAt(0).toUpperCase() + component.slice(1)}`)
-
-        // Check if the story has a render function
-        if (storyModule[selectedVariant]?.render) {
-          // Create a component from the render function
-          setStoryComponent(() => () => storyModule[selectedVariant].render())
-        }
-        // Otherwise, check if it has a component property
-        else if (storyModule[selectedVariant]?.component) {
-          setStoryComponent(() => storyModule[selectedVariant].component)
-        } else {
-          // If no variant is found, try to use the first available variant
-          const firstVariant = variants[0]
-          if (storyModule[firstVariant]?.render) {
-            setStoryComponent(() => () => storyModule[firstVariant].render())
-            setStoryVariant(firstVariant)
-          } else if (storyModule[firstVariant]?.component) {
-            setStoryComponent(() => storyModule[firstVariant].component)
-            setStoryVariant(firstVariant)
-          } else {
-            setError(`Story variant "${selectedVariant}" does not have a component or render function`)
-          }
-        }
-      } catch (error) {
-        console.error("Error loading story:", error)
-        setError(`Error loading story: ${error instanceof Error ? error.message : String(error)}`)
-      }
-
+  const loadStory = useCallback(async () => {
+    if (!hasInitialParams) {
       setIsLoading(false)
+      return
     }
 
+    const [category, component, variantFromUrl] = params.path
+
+    // Check if the category and component exist in our map
+    if (
+      !storyMap[category as keyof typeof storyMap] ||
+      !storyMap[category as keyof typeof storyMap].includes(component)
+    ) {
+      return notFound()
+    }
+
+    try {
+      // Create a cache key
+      const cacheKey = `${category}/${component}`
+
+      // Use cached module if available
+      let storyModule
+      if (storyModuleCache[cacheKey]) {
+        storyModule = storyModuleCache[cacheKey]
+      } else {
+        // Use the explicit import function from our mapping
+        const importFn = storyImports[category as keyof typeof storyImports]?.[component as any]
+
+        if (!importFn) {
+          throw new Error(`Import function not found for ${category}/${component}`)
+        }
+
+        storyModule = await importFn()
+        // Cache the module
+        storyModuleCache[cacheKey] = storyModule
+      }
+
+      // Get all available story variants
+      const variants = Object.keys(storyModule).filter(
+        (key) => key !== "default" && typeof storyModule[key] === "object",
+      )
+
+      if (variants.length === 0) {
+        throw new Error(`No story variants found for ${category}/${component}`)
+      }
+
+      setAvailableVariants(variants)
+
+      // Set the current story variant - use the one from URL if provided, otherwise use the first available variant
+      const selectedVariant = variantFromUrl || variants[0]
+      setStoryVariant(selectedVariant)
+
+      // Set the story title
+      setStoryTitle(`${component.charAt(0).toUpperCase() + component.slice(1)}`)
+
+      // Check if the story has a render function
+      if (storyModule[selectedVariant]?.render) {
+        // Create a component from the render function
+        setStoryComponent(() => () => storyModule[selectedVariant].render())
+      }
+      // Otherwise, check if it has a component property
+      else if (storyModule[selectedVariant]?.component) {
+        setStoryComponent(() => storyModule[selectedVariant].component)
+      } else {
+        // If no variant is found, try to use the first available variant
+        const firstVariant = variants[0]
+        if (storyModule[firstVariant]?.render) {
+          setStoryComponent(() => () => storyModule[firstVariant].render())
+          setStoryVariant(firstVariant)
+        } else if (storyModule[firstVariant]?.component) {
+          setStoryComponent(() => storyModule[firstVariant].component)
+          setStoryVariant(firstVariant)
+        } else {
+          setError(`Story variant "${selectedVariant}" does not have a component or render function`)
+        }
+      }
+    } catch (error) {
+      console.error("Error loading story:", error)
+      setError(`Error loading story: ${error instanceof Error ? error.message : String(error)}`)
+    }
+
+    setIsLoading(false)
+  }, [params.path, hasInitialParams])
+
+  useEffect(() => {
     setIsLoading(true)
     setError(null)
     loadStory()
-  }, [params, hasInitialParams])
+  }, [loadStory])
 
   // Replace this useEffect
   useEffect(() => {
@@ -247,8 +247,24 @@ export default function StoryPage() {
               <TabsTrigger
                 key={variant}
                 value={variant.toLowerCase()}
-                onClick={() => {
-                  router.push(`/storybook/${params.path[0]}/${params.path[1]}/${variant}`, { scroll: false })
+                onClick={(e) => {
+                  // Update the variant state immediately for a faster UI response
+                  setStoryVariant(variant)
+
+                  // Use router.push for client-side navigation without page reload
+                  const url = `/storybook/${params.path[0]}/${params.path[1]}/${variant}`
+                  router.push(url, { scroll: false })
+
+                  // Load the story component directly if it's already in the cache
+                  const cacheKey = `${params.path[0]}/${params.path[1]}`
+                  const storyModule = storyModuleCache[cacheKey]
+                  if (storyModule && storyModule[variant]) {
+                    if (storyModule[variant].render) {
+                      setStoryComponent(() => () => storyModule[variant].render())
+                    } else if (storyModule[variant].component) {
+                      setStoryComponent(() => storyModule[variant].component)
+                    }
+                  }
                 }}
               >
                 {variant}

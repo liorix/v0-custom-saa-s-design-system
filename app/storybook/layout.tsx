@@ -9,6 +9,8 @@ import { useState } from "react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import "../globals.css"
 import "./storybook.css"
+// Import the ClientLink component
+import { ClientLink } from "@/components/storybook/client-link"
 
 // Component categories and their items
 const categories = {
@@ -125,7 +127,7 @@ export default function StorybookLayout({
             <h2 className="px-4 mb-2 text-xs font-semibold text-muted-foreground">{category.label}</h2>
             <div className="space-y-1">
               {category.items.map((item) => (
-                <Link
+                <ClientLink
                   key={item.path}
                   href={item.path}
                   className={cn(
@@ -134,14 +136,10 @@ export default function StorybookLayout({
                       ? "bg-accent text-accent-foreground"
                       : "hover:bg-accent/50",
                   )}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setIsMobileMenuOpen(false)
-                    router.push(item.path, { scroll: false })
-                  }}
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.name}
-                </Link>
+                </ClientLink>
               ))}
             </div>
           </div>
