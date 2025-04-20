@@ -100,6 +100,9 @@ const storyImports = {
   },
 }
 
+// Add this near the top of the file, outside the component
+const storyModuleCache: Record<string, any> = {}
+
 // Create a component to safely render stories
 function StoryRenderer({ Story }: { Story: React.ComponentType<any> }) {
   return <Story />
@@ -142,14 +145,25 @@ export default function StoryPage() {
       }
 
       try {
-        // Use the explicit import function from our mapping
-        const importFn = storyImports[category as keyof typeof storyImports]?.[component as any]
+        // Create a cache key
+        const cacheKey = `${category}/${component}`
 
-        if (!importFn) {
-          throw new Error(`Import function not found for ${category}/${component}`)
+        // Use cached module if available
+        let storyModule
+        if (storyModuleCache[cacheKey]) {
+          storyModule = storyModuleCache[cacheKey]
+        } else {
+          // Use the explicit import function from our mapping
+          const importFn = storyImports[category as keyof typeof storyImports]?.[component as any]
+
+          if (!importFn) {
+            throw new Error(`Import function not found for ${category}/${component}`)
+          }
+
+          storyModule = await importFn()
+          // Cache the module
+          storyModuleCache[cacheKey] = storyModule
         }
-
-        const storyModule = await importFn()
 
         // Get all available story variants
         const variants = Object.keys(storyModule).filter(
@@ -203,11 +217,12 @@ export default function StoryPage() {
     loadStory()
   }, [params, hasInitialParams])
 
-  // Redirect to the first variant if no variant is specified
+  // Replace this useEffect
   useEffect(() => {
     if (!isLoading && hasInitialParams && params.path && params.path.length === 2 && availableVariants.length > 0) {
       const [category, component] = params.path
-      router.replace(`/storybook/${category}/${component}/${availableVariants[0]}`)
+      setStoryVariant(availableVariants[0])
+      router.replace(`/storybook/${category}/${component}/${availableVariants[0]}`, { scroll: false })
     }
   }, [isLoading, params, availableVariants, hasInitialParams, router])
 
@@ -229,8 +244,14 @@ export default function StoryPage() {
         <Tabs value={storyVariant.toLowerCase()} className="mb-6">
           <TabsList>
             {availableVariants.map((variant) => (
-              <TabsTrigger key={variant} value={variant.toLowerCase()} asChild>
-                <a href={`/storybook/${params.path[0]}/${params.path[1]}/${variant}`}>{variant}</a>
+              <TabsTrigger
+                key={variant}
+                value={variant.toLowerCase()}
+                onClick={() => {
+                  router.push(`/storybook/${params.path[0]}/${params.path[1]}/${variant}`, { scroll: false })
+                }}
+              >
+                {variant}
               </TabsTrigger>
             ))}
           </TabsList>

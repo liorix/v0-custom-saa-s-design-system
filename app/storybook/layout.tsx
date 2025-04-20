@@ -94,7 +94,15 @@ export default function StorybookLayout({
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-2 px-4 py-4 border-b">
-        <Link href="/storybook" className="flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
+        <Link
+          href="/storybook"
+          className="flex items-center gap-2"
+          onClick={(e) => {
+            e.preventDefault()
+            setIsMobileMenuOpen(false)
+            router.push("/storybook", { scroll: false })
+          }}
+        >
           <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <Home className="h-4 w-4" />
           </div>
@@ -126,7 +134,11 @@ export default function StorybookLayout({
                       ? "bg-accent text-accent-foreground"
                       : "hover:bg-accent/50",
                   )}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setIsMobileMenuOpen(false)
+                    router.push(item.path, { scroll: false })
+                  }}
                 >
                   {item.name}
                 </Link>
