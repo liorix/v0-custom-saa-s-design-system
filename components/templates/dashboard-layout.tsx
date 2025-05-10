@@ -21,6 +21,7 @@ import { usePathname } from "next/navigation"
 import { type ReactNode, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { SidebarThemeSwitcher } from "@/components/atoms/sidebar-theme-switcher"
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -190,6 +191,10 @@ export function DashboardLayout({
             <Bell className="h-4 w-4" />
             <span>Notifications</span>
           </Link>
+
+          {/* Add the SidebarThemeSwitcher here */}
+          <SidebarThemeSwitcher />
+
           <button
             onClick={() => {
               onSignOut()
