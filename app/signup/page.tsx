@@ -6,11 +6,75 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { UserPlus } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { toast } from "@/hooks/use-toast"
 
 export default function SignupPage() {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+
   const handleSignup = async (values: any) => {
-    // Handle signup logic here
-    console.log("Signup values:", values)
+    setIsLoading(true)
+
+    try {
+      // First, create the user
+      const createResponse = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: values.name,
+          email: values.email,
+          password: values.password,
+        }),
+      })
+
+      if (!createResponse.ok) {
+        const error = await createResponse.json()
+        throw new Error(error.message || "Failed to create account")
+      }
+
+      // Then, sign in the user
+      const signInResponse = await fetch("/api/auth/signin/credentials", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password,
+          callbackUrl: "/dashboard",
+        }),
+      })
+
+      if (!signInResponse.ok) {
+        const error = await signInResponse.json()
+        throw new Error(error.message || "Account created but failed to sign in")
+      }
+
+      const data = await signInResponse.json()
+
+      toast({
+        title: "Account created",
+        description: "Your account has been created successfully.",
+      })
+
+      if (data.url) {
+        router.push(data.url)
+      } else {
+        router.push("/dashboard")
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create account",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -28,7 +92,7 @@ export default function SignupPage() {
       }
     >
       <div className="grid gap-6">
-        <AuthForm type="signup" onSubmit={handleSignup} />
+        <AuthForm type="signup" onSubmit={handleSignup} isLoading={isLoading} />
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
@@ -39,14 +103,9 @@ export default function SignupPage() {
           </div>
         </div>
 
-        <div className="grid gap-2">
-          <Button variant="outline" type="button">
-            Google
-          </Button>
-          <Button variant="outline" type="button">
-            GitHub
-          </Button>
-        </div>
+        <Button variant="outline" type="button" onClick={() => router.push("/login")} disabled={isLoading}>
+          Magic Link
+        </Button>
       </div>
     </AuthLayout>
   )

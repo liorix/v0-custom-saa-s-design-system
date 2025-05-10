@@ -9,7 +9,6 @@ import { Form } from "@/components/ui/form"
 import { FormInputField } from "@/components/molecules/form-field"
 import { cn } from "@/lib/utils"
 import { Loader2 } from "lucide-react"
-import { useState } from "react"
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -33,11 +32,10 @@ interface AuthFormProps {
   type: "login" | "signup"
   onSubmit: (values: LoginFormValues | SignupFormValues) => Promise<void>
   className?: string
+  isLoading?: boolean
 }
 
-export function AuthForm({ type, onSubmit, className }: AuthFormProps) {
-  const [isLoading, setIsLoading] = useState(false)
-
+export function AuthForm({ type, onSubmit, className, isLoading = false }: AuthFormProps) {
   const form = useForm<LoginFormValues | SignupFormValues>({
     resolver: zodResolver(type === "login" ? loginSchema : signupSchema),
     defaultValues:
@@ -45,14 +43,7 @@ export function AuthForm({ type, onSubmit, className }: AuthFormProps) {
   })
 
   const handleSubmit = async (values: LoginFormValues | SignupFormValues) => {
-    setIsLoading(true)
-    try {
-      await onSubmit(values)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsLoading(false)
-    }
+    await onSubmit(values)
   }
 
   return (

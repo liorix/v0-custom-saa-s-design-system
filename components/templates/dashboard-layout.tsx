@@ -2,6 +2,7 @@
 
 import { Logo } from "@/components/atoms/logo"
 import { OrganizationSwitcher } from "@/components/organisms/organization-switcher"
+import { SidebarThemeSwitcher } from "@/components/atoms/sidebar-theme-switcher"
 import { cn } from "@/lib/utils"
 import {
   BarChart3,
@@ -15,13 +16,13 @@ import {
   Menu,
   Settings,
   Users,
+  User,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { type ReactNode, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { SidebarThemeSwitcher } from "@/components/atoms/sidebar-theme-switcher"
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -169,6 +170,17 @@ export function DashboardLayout({
       {/* Sidebar Footer */}
       <div className="border-t p-4">
         <div className="space-y-1">
+          <Link
+            href="/dashboard/profile"
+            className={cn(
+              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium",
+              pathname === "/dashboard/profile" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50",
+            )}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <User className="h-4 w-4" />
+            <span>Profile</span>
+          </Link>
           <Link
             href="/dashboard/settings"
             className={cn(
