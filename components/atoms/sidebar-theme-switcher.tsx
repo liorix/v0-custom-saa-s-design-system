@@ -71,7 +71,25 @@ export function SidebarThemeSwitcher() {
           {themes.map((themeOption) => (
             <DropdownMenuRadioItem key={themeOption.value} value={themeOption.value}>
               <div className="flex items-center gap-2">
-                <div className={`h-4 w-4 rounded-full bg-primary`} />
+                <div
+                  className={`h-4 w-4 rounded-full`}
+                  style={{
+                    backgroundColor:
+                      themeOption.value === "zinc"
+                        ? "var(--zinc)"
+                        : themeOption.value === "slate"
+                          ? "var(--slate)"
+                          : themeOption.value === "rose"
+                            ? "var(--rose)"
+                            : themeOption.value === "blue"
+                              ? "var(--blue)"
+                              : themeOption.value === "green"
+                                ? "var(--green)"
+                                : themeOption.value === "orange"
+                                  ? "var(--orange)"
+                                  : "var(--primary)",
+                  }}
+                />
                 {themeOption.label}
               </div>
             </DropdownMenuRadioItem>

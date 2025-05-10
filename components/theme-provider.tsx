@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState, useCallback } from "react"
 
 type Theme = "light" | "dark"
 type ThemeColor = "zinc" | "slate" | "rose" | "blue" | "green" | "orange"
@@ -69,15 +69,24 @@ export function ThemeProvider({
     localStorage.setItem(`${storageKey}-color`, color)
   }, [theme, color, storageKey])
 
+  const setColorCallback = useCallback(
+    (color: ThemeColor) => {
+      const root = window.document.documentElement
+      root.style.setProperty("--color", color)
+      root.setAttribute("data-color", color)
+      localStorage.setItem(`${storageKey}-color`, color)
+      setColor(color)
+    },
+    [storageKey],
+  )
+
   const value = {
     theme,
     color,
     setTheme: (theme: Theme) => {
       setTheme(theme)
     },
-    setColor: (color: ThemeColor) => {
-      setColor(color)
-    },
+    setColor: setColorCallback,
   }
 
   return (

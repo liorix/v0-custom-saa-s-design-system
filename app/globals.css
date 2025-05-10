@@ -5,6 +5,13 @@
 @layer base {
   /* Base theme variables (light mode) */
   :root {
+    --zinc: #71717a;
+    --slate: #64748b;
+    --rose: #e11d48;
+    --blue: #3b82f6;
+    --green: #22c55e;
+    --orange: #f97316;
+
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -39,6 +46,13 @@
 
   /* Dark mode */
   .dark {
+    --zinc: #a1a1aa;
+    --slate: #94a3b8;
+    --rose: #fb7185;
+    --blue: #60a5fa;
+    --green: #4ade80;
+    --orange: #fb923c;
+
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
