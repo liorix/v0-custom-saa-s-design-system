@@ -27,8 +27,16 @@ export async function POST() {
       })
     }
 
-    // Return success response
-    return NextResponse.json({ success: true })
+    // Return success response with cache control headers to prevent caching
+    return new NextResponse(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store, max-age=0, must-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    })
   } catch (error) {
     console.error("Logout error:", error)
     return NextResponse.json({ error: "An error occurred during logout" }, { status: 500 })

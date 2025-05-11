@@ -4,7 +4,6 @@ import type React from "react"
 
 import { useState } from "react"
 import { DashboardLayout } from "@/components/templates/dashboard-layout"
-import { useRouter } from "next/navigation"
 import { toast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/user-provider"
 
@@ -13,7 +12,6 @@ interface DashboardShellProps {
 }
 
 export function DashboardShell({ children }: DashboardShellProps) {
-  const router = useRouter()
   const { user, logout } = useAuth()
   const [currentOrganizationId, setCurrentOrganizationId] = useState("1")
   const [isLoggingOut, setIsLoggingOut] = useState(false)
@@ -30,14 +28,19 @@ export function DashboardShell({ children }: DashboardShellProps) {
     setIsLoggingOut(true)
 
     try {
-      await logout()
-
+      // Show toast before logout to ensure it's visible
       toast({
-        title: "Signed out",
-        description: "You have been signed out successfully",
+        title: "Signing out...",
+        description: "You will be redirected to the login page.",
       })
 
-      // The redirect is handled in the logout function
+      // Small delay to ensure toast is shown
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
+      // Call logout function
+      await logout()
+
+      // Note: The redirect is now handled in the logout function
     } catch (error) {
       console.error("Sign out error:", error)
       toast({

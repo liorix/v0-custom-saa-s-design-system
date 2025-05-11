@@ -38,7 +38,14 @@ export async function middleware(request: NextRequest) {
   if (!isAuthenticated) {
     const loginUrl = new URL("/login", request.url)
     loginUrl.searchParams.set("callbackUrl", request.url)
-    return NextResponse.redirect(loginUrl)
+
+    // Add cache control headers to prevent caching
+    const response = NextResponse.redirect(loginUrl)
+    response.headers.set("Cache-Control", "no-store, max-age=0, must-revalidate")
+    response.headers.set("Pragma", "no-cache")
+    response.headers.set("Expires", "0")
+
+    return response
   }
 
   // Allow access to protected routes for authenticated users

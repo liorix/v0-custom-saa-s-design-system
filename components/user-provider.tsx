@@ -1,7 +1,6 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
-import { useRouter } from "next/navigation"
 
 // Define the user type
 type User = {
@@ -32,7 +31,6 @@ export const useAuth = () => useContext(AuthContext)
 export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
 
   // Fetch the user data on mount
   useEffect(() => {
@@ -76,7 +74,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
       setUser(null)
 
       // Force a hard navigation to clear any client-side state
-      window.location.href = "/login"
+      // Use a small timeout to ensure the state is updated before navigation
+      setTimeout(() => {
+        window.location.href = "/login"
+      }, 100)
 
       // Return a resolved promise
       return Promise.resolve()
