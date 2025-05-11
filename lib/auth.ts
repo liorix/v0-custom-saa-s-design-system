@@ -1,5 +1,5 @@
 import { neon } from "@neondatabase/serverless"
-import { compare, hash } from "bcrypt"
+import * as bcryptjs from "bcryptjs" // Changed from bcrypt to bcryptjs
 
 // Initialize the database connection
 const sql = neon(process.env.DATABASE_URL!)
@@ -19,7 +19,7 @@ export const auth = {
         return null
       }
 
-      const isPasswordValid = await compare(password, user.password)
+      const isPasswordValid = await bcryptjs.compare(password, user.password) // Using bcryptjs.compare
 
       if (!isPasswordValid) {
         return null
@@ -39,7 +39,8 @@ export const auth = {
 
   // Create a new user
   async createUser(data: { name: string; email: string; password: string }) {
-    const hashedPassword = await hash(data.password, 10)
+    const salt = await bcryptjs.genSalt(10) // Using bcryptjs.genSalt
+    const hashedPassword = await bcryptjs.hash(data.password, salt) // Using bcryptjs.hash
 
     try {
       const result = await sql`
@@ -98,7 +99,8 @@ export const auth = {
       }
 
       if (data.password) {
-        const hashedPassword = await hash(data.password, 10)
+        const salt = await bcryptjs.genSalt(10) // Using bcryptjs.genSalt
+        const hashedPassword = await bcryptjs.hash(data.password, salt) // Using bcryptjs.hash
         updates.push(`password = ${hashedPassword}`)
       }
 
