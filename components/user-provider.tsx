@@ -42,10 +42,14 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
         if (response.ok) {
           const data = await response.json()
-          setUser(data.user)
+          setUser(data.user || null) // Ensure null if no user
+        } else {
+          // If response is not OK, clear user
+          setUser(null)
         }
       } catch (error) {
         console.error("Error fetching user:", error)
+        setUser(null)
       } finally {
         setIsLoading(false)
       }
@@ -57,11 +61,28 @@ export function UserProvider({ children }: { children: ReactNode }) {
   // Logout function
   const logout = async () => {
     try {
-      await fetch("/api/auth/logout", { method: "POST" })
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error("Logout failed")
+      }
+
+      // Clear user state
       setUser(null)
-      router.push("/login")
+
+      // Force a hard navigation to clear any client-side state
+      window.location.href = "/login"
+
+      // Return a resolved promise
+      return Promise.resolve()
     } catch (error) {
       console.error("Error logging out:", error)
+      return Promise.reject(error)
     }
   }
 

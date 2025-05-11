@@ -6,7 +6,7 @@ import { useState } from "react"
 import { DashboardLayout } from "@/components/templates/dashboard-layout"
 import { useRouter } from "next/navigation"
 import { toast } from "@/hooks/use-toast"
-import { useAuth } from "@/components/user-provider" // Use our custom auth hook
+import { useAuth } from "@/components/user-provider"
 
 interface DashboardShellProps {
   children: React.ReactNode
@@ -14,8 +14,9 @@ interface DashboardShellProps {
 
 export function DashboardShell({ children }: DashboardShellProps) {
   const router = useRouter()
-  const { user, logout } = useAuth() // Use our custom auth hook
+  const { user, logout } = useAuth()
   const [currentOrganizationId, setCurrentOrganizationId] = useState("1")
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const organizations = [
     { id: "1", name: "Acme Inc" },
@@ -24,22 +25,27 @@ export function DashboardShell({ children }: DashboardShellProps) {
   ]
 
   const handleSignOut = async () => {
+    if (isLoggingOut) return
+
+    setIsLoggingOut(true)
+
     try {
-      await logout() // Use the logout function from our custom hook
+      await logout()
 
       toast({
         title: "Signed out",
         description: "You have been signed out successfully",
       })
 
-      router.push("/login")
+      // The redirect is handled in the logout function
     } catch (error) {
       console.error("Sign out error:", error)
       toast({
         title: "Error",
-        description: "Failed to sign out",
+        description: "Failed to sign out. Please try again.",
         variant: "destructive",
       })
+      setIsLoggingOut(false)
     }
   }
 
