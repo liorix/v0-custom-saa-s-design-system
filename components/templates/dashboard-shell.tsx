@@ -4,10 +4,9 @@ import type React from "react"
 
 import { useState } from "react"
 import { DashboardLayout } from "@/components/templates/dashboard-layout"
-import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { toast } from "@/hooks/use-toast"
-import { signOut } from "next-auth/react"
+import { useAuth } from "@/components/user-provider" // Use our custom auth hook
 
 interface DashboardShellProps {
   children: React.ReactNode
@@ -15,7 +14,7 @@ interface DashboardShellProps {
 
 export function DashboardShell({ children }: DashboardShellProps) {
   const router = useRouter()
-  const { data: session } = useSession()
+  const { user, logout } = useAuth() // Use our custom auth hook
   const [currentOrganizationId, setCurrentOrganizationId] = useState("1")
 
   const organizations = [
@@ -26,7 +25,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
 
   const handleSignOut = async () => {
     try {
-      await signOut({ redirect: false })
+      await logout() // Use the logout function from our custom hook
 
       toast({
         title: "Signed out",
