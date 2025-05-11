@@ -15,9 +15,10 @@ export async function GET() {
         status: 200,
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-store, max-age=0, must-revalidate",
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
           Pragma: "no-cache",
           Expires: "0",
+          "Surrogate-Control": "no-store",
         },
       })
     }
@@ -44,9 +45,10 @@ export async function GET() {
         status: 200,
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-store, max-age=0, must-revalidate",
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
           Pragma: "no-cache",
           Expires: "0",
+          "Surrogate-Control": "no-store",
         },
       })
     }
@@ -75,9 +77,10 @@ export async function GET() {
         status: 200,
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-store, max-age=0, must-revalidate",
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
           Pragma: "no-cache",
           Expires: "0",
+          "Surrogate-Control": "no-store",
         },
       })
     }
@@ -98,9 +101,10 @@ export async function GET() {
         status: 200,
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-store, max-age=0, must-revalidate",
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
           Pragma: "no-cache",
           Expires: "0",
+          "Surrogate-Control": "no-store",
         },
       },
     )
@@ -110,9 +114,10 @@ export async function GET() {
       status: 200,
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-store, max-age=0, must-revalidate",
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
         Pragma: "no-cache",
         Expires: "0",
+        "Surrogate-Control": "no-store",
       },
     })
   }

@@ -14,14 +14,12 @@ type User = {
 type AuthContextType = {
   user: User | null
   isLoading: boolean
-  logout: () => Promise<void>
 }
 
 // Create the auth context
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoading: true,
-  logout: async () => {},
 })
 
 // Create a hook to use the auth context
@@ -36,7 +34,13 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("/api/auth/session")
+        const response = await fetch("/api/auth/session", {
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
+        })
 
         if (response.ok) {
           const data = await response.json()
@@ -56,36 +60,5 @@ export function UserProvider({ children }: { children: ReactNode }) {
     fetchUser()
   }, [])
 
-  // Logout function
-  const logout = async () => {
-    try {
-      const response = await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error("Logout failed")
-      }
-
-      // Clear user state
-      setUser(null)
-
-      // Force a hard navigation to clear any client-side state
-      // Use a small timeout to ensure the state is updated before navigation
-      setTimeout(() => {
-        window.location.href = "/login"
-      }, 100)
-
-      // Return a resolved promise
-      return Promise.resolve()
-    } catch (error) {
-      console.error("Error logging out:", error)
-      return Promise.reject(error)
-    }
-  }
-
-  return <AuthContext.Provider value={{ user, isLoading, logout }}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={{ user, isLoading }}>{children}</AuthContext.Provider>
 }

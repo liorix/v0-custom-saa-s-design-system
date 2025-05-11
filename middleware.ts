@@ -39,17 +39,26 @@ export async function middleware(request: NextRequest) {
     const loginUrl = new URL("/login", request.url)
     loginUrl.searchParams.set("callbackUrl", request.url)
 
-    // Add cache control headers to prevent caching
+    // Create a response with cache control headers
     const response = NextResponse.redirect(loginUrl)
-    response.headers.set("Cache-Control", "no-store, max-age=0, must-revalidate")
+
+    // Add cache control headers to prevent caching
+    response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate")
     response.headers.set("Pragma", "no-cache")
     response.headers.set("Expires", "0")
+    response.headers.set("Surrogate-Control", "no-store")
 
     return response
   }
 
-  // Allow access to protected routes for authenticated users
-  return NextResponse.next()
+  // For authenticated users accessing protected routes, add cache control headers
+  const response = NextResponse.next()
+  response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate")
+  response.headers.set("Pragma", "no-cache")
+  response.headers.set("Expires", "0")
+  response.headers.set("Surrogate-Control", "no-store")
+
+  return response
 }
 
 // Configure which routes use this middleware
