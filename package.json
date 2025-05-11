@@ -46,7 +46,6 @@
     "@tanstack/react-table": "latest",
     "@testing-library/dom": "latest",
     "@testing-library/react": "latest",
-    "@vercel/postgres": "latest",
     "autoprefixer": "^10.4.20",
     "bcryptjs": "latest",
     "chalk": "latest",
@@ -75,6 +74,7 @@
     "storybook": "latest",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
+    "uuid": "latest",
     "vaul": "^0.9.6",
     "webpack": "latest",
     "zod": "latest"

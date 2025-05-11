@@ -5,96 +5,150 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
+import { z } from "zod"
+import { AuthLayout } from "@/components/templates/auth-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { AuthLayout } from "@/components/templates/auth-layout"
+import { toast } from "@/hooks/use-toast"
+
+// Define the form schema
+const loginSchema = z.object({
+  email: z.string().email("Please enter a valid email"),
+  password: z.string().min(1, "Password is required"),
+})
 
 export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
 
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  })
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev }
+        delete newErrors[name]
+        return newErrors
+      })
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
-    setError("")
+    setErrors({})
 
     try {
+      // Validate form data
+      const validatedData = loginSchema.parse(formData)
+
+      // Submit the form
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(validatedData),
       })
 
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || "Login failed")
+        throw new Error(data.error || "Invalid email or password")
       }
 
-      // Redirect to the callback URL
+      // Show success message
+      toast({
+        title: "Logged in",
+        description: "You have been logged in successfully",
+      })
+
+      // Redirect to dashboard or callback URL
       router.push(callbackUrl)
     } catch (error) {
-      setError(error instanceof Error ? error.message : "An error occurred")
+      if (error instanceof z.ZodError) {
+        // Handle validation errors
+        const newErrors: Record<string, string> = {}
+        error.errors.forEach((err) => {
+          if (err.path[0]) {
+            newErrors[err.path[0] as string] = err.message
+          }
+        })
+        setErrors(newErrors)
+      } else if (error instanceof Error) {
+        // Handle other errors
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        })
+      } else {
+        // Fallback error
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred",
+          variant: "destructive",
+        })
+      }
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <AuthLayout title="Sign in to your account" description="Enter your credentials below to sign in to your account">
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>Enter your email and password to access your account</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            {error && <div className="text-sm text-red-500">{error}</div>}
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Logging in..." : "Login"}
-            </Button>
-          </form>
-        </CardContent>
-        <CardFooter className="flex justify-center">
-          <div className="text-sm text-center">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-primary hover:underline">
-              Sign up
+    <AuthLayout title="Sign in to your account" description="Enter your email to sign in to your account">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Enter your email"
+            value={formData.email}
+            onChange={handleChange}
+            disabled={isLoading}
+          />
+          {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">Password</Label>
+            <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+              Forgot password?
             </Link>
           </div>
-        </CardFooter>
-      </Card>
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Enter your password"
+            value={formData.password}
+            onChange={handleChange}
+            disabled={isLoading}
+          />
+          {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
+        </div>
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? "Signing in..." : "Sign in"}
+        </Button>
+      </form>
+      <div className="mt-4 text-center text-sm">
+        Don't have an account?{" "}
+        <Link href="/signup" className="font-medium text-primary hover:underline">
+          Sign up
+        </Link>
+      </div>
     </AuthLayout>
   )
 }

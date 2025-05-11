@@ -30,7 +30,6 @@ interface DashboardLayoutProps {
   currentOrganizationId: string
   onOrganizationChange: (organizationId: string) => void
   onCreateOrganization: () => void
-  onSignOut: () => void
   className?: string
 }
 
@@ -40,7 +39,6 @@ export function DashboardLayout({
   currentOrganizationId,
   onOrganizationChange,
   onCreateOrganization,
-  onSignOut,
   className,
 }: DashboardLayoutProps) {
   const pathname = usePathname()
@@ -207,16 +205,15 @@ export function DashboardLayout({
           {/* Add the SidebarThemeSwitcher here */}
           <SidebarThemeSwitcher />
 
-          <button
-            onClick={() => {
-              onSignOut()
-              setIsMobileMenuOpen(false)
-            }}
+          {/* Simple direct link to the sign-out page */}
+          <Link
+            href="/signout"
             className="w-full flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent/50"
+            onClick={() => setIsMobileMenuOpen(false)}
           >
             <LogOut className="h-4 w-4" />
             <span>Sign out</span>
-          </button>
+          </Link>
         </div>
       </div>
     </div>
