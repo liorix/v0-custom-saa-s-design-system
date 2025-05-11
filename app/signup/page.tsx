@@ -1,112 +1,110 @@
 "use client"
 
-import { AuthForm } from "@/components/organisms/auth-form"
-import { AuthLayout } from "@/components/templates/auth-layout"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { UserPlus } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+import type React from "react"
+
 import { useState } from "react"
-import { toast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { AuthLayout } from "@/components/templates/auth-layout"
 
 export default function SignupPage() {
   const router = useRouter()
+
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSignup = async (values: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
     setIsLoading(true)
+    setError("")
 
     try {
-      // First, create the user
-      const createResponse = await fetch("/api/auth/signup", {
+      const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: values.name,
-          email: values.email,
-          password: values.password,
-        }),
+        body: JSON.stringify({ name, email, password }),
       })
 
-      if (!createResponse.ok) {
-        const error = await createResponse.json()
-        throw new Error(error.message || "Failed to create account")
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Signup failed")
       }
 
-      // Then, sign in the user
-      const signInResponse = await fetch("/api/auth/signin/credentials", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: values.email,
-          password: values.password,
-          callbackUrl: "/dashboard",
-        }),
-      })
-
-      if (!signInResponse.ok) {
-        const error = await signInResponse.json()
-        throw new Error(error.message || "Account created but failed to sign in")
-      }
-
-      const data = await signInResponse.json()
-
-      toast({
-        title: "Account created",
-        description: "Your account has been created successfully.",
-      })
-
-      if (data.url) {
-        router.push(data.url)
-      } else {
-        router.push("/dashboard")
-      }
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create account",
-        variant: "destructive",
-      })
+      // Redirect to the login page
+      router.push("/login?success=true")
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "An error occurred")
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <AuthLayout
-      title="Create an account"
-      description="Enter your information below to create your account"
-      icon={UserPlus}
-      footer={
-        <p className="text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <Link href="/login" className="font-medium text-primary underline underline-offset-4 hover:text-primary/90">
-            Sign in
-          </Link>
-        </p>
-      }
-    >
-      <div className="grid gap-6">
-        <AuthForm type="signup" onSubmit={handleSignup} isLoading={isLoading} />
-
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <Separator className="w-full" />
+    <AuthLayout>
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-2xl">Create an account</CardTitle>
+          <CardDescription>Enter your information to create an account</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="John Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && <div className="text-sm text-red-500">{error}</div>}
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Creating account..." : "Sign up"}
+            </Button>
+          </form>
+        </CardContent>
+        <CardFooter className="flex justify-center">
+          <div className="text-sm text-center">
+            Already have an account?{" "}
+            <Link href="/login" className="text-primary hover:underline">
+              Login
+            </Link>
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-          </div>
-        </div>
-
-        <Button variant="outline" type="button" onClick={() => router.push("/login")} disabled={isLoading}>
-          Magic Link
-        </Button>
-      </div>
+        </CardFooter>
+      </Card>
     </AuthLayout>
   )
 }

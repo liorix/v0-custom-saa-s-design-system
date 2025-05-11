@@ -1,11 +1,12 @@
 "use client"
 
 import type React from "react"
-
-import { DashboardLayout } from "@/components/templates/dashboard-layout"
-import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "@/hooks/use-toast"
+import { signOut } from "next-auth/react"
+
+// Note: We're not importing DashboardLayout here anymore
+// as we'll use children directly
 
 export default function DashboardLayoutWrapper({
   children,
@@ -13,26 +14,10 @@ export default function DashboardLayoutWrapper({
   children: React.ReactNode
 }) {
   const router = useRouter()
-  const [currentOrganizationId, setCurrentOrganizationId] = useState("1")
-
-  const organizations = [
-    { id: "1", name: "Acme Inc" },
-    { id: "2", name: "Globex Corporation" },
-    { id: "3", name: "Initech" },
-  ]
 
   const handleSignOut = async () => {
     try {
-      const response = await fetch("/api/auth/signout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to sign out")
-      }
+      await signOut({ redirect: false })
 
       toast({
         title: "Signed out",
@@ -50,15 +35,7 @@ export default function DashboardLayoutWrapper({
     }
   }
 
-  return (
-    <DashboardLayout
-      organizations={organizations}
-      currentOrganizationId={currentOrganizationId}
-      onOrganizationChange={setCurrentOrganizationId}
-      onCreateOrganization={() => console.log("Create organization")}
-      onSignOut={handleSignOut}
-    >
-      {children}
-    </DashboardLayout>
-  )
+  // We're just returning children directly now
+  // The actual sidebar will be in the DashboardShell component
+  return children
 }

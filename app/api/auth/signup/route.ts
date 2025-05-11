@@ -1,50 +1,45 @@
-import { createUser, getUserByEmail } from "@/lib/auth"
 import { type NextRequest, NextResponse } from "next/server"
+import { auth } from "@/lib/auth"
 import { z } from "zod"
+import { neon } from "@neondatabase/serverless"
 
+// Initialize the database connection
+const sql = neon(process.env.DATABASE_URL!)
+
+// Define the signup schema
 const signupSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  name: z.string().min(2),
+  email: z.string().email(),
+  password: z.string().min(6),
 })
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const body = await req.json()
+    // Parse the request body
+    const body = await request.json()
 
     // Validate the request body
     const result = signupSchema.safeParse(body)
 
     if (!result.success) {
-      return NextResponse.json({ message: result.error.errors[0].message }, { status: 400 })
+      return NextResponse.json({ error: "Invalid signup data" }, { status: 400 })
     }
 
+    // Check if the user already exists
     const { name, email, password } = result.data
-
-    // Check if user already exists
-    const existingUser = await getUserByEmail(email)
+    const existingUser = await auth.getUserByEmail(email)
 
     if (existingUser) {
-      return NextResponse.json({ message: "A user with this email already exists" }, { status: 409 })
+      return NextResponse.json({ error: "Email already in use" }, { status: 409 })
     }
 
     // Create the user
-    const user = await createUser({ name, email, password })
+    const user = await auth.createUser({ name, email, password })
 
-    return NextResponse.json(
-      {
-        message: "User created successfully",
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        },
-      },
-      { status: 201 },
-    )
+    // Return the user data
+    return NextResponse.json({ user })
   } catch (error) {
     console.error("Signup error:", error)
-
-    return NextResponse.json({ message: "An error occurred while creating your account" }, { status: 500 })
+    return NextResponse.json({ error: "An error occurred during signup" }, { status: 500 })
   }
 }

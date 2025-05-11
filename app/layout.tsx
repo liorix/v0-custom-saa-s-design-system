@@ -1,16 +1,21 @@
 import type React from "react"
-import { StorybookNav } from "@/components/storybook-nav"
 import { ThemeProvider } from "@/components/theme-provider"
+import { BetterAuthProvider } from "@/components/better-auth-provider"
+import { StorybookNav } from "@/components/storybook-nav"
+import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ThemeProvider>
-          {children}
-          <StorybookNav />
-        </ThemeProvider>
+        <BetterAuthProvider>
+          <ThemeProvider>
+            {children}
+            <StorybookNav />
+            <Toaster />
+          </ThemeProvider>
+        </BetterAuthProvider>
       </body>
     </html>
   )

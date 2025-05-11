@@ -1,149 +1,100 @@
 "use client"
 
-import { AuthForm } from "@/components/organisms/auth-form"
-import { AuthLayout } from "@/components/templates/auth-layout"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { LogIn } from "lucide-react"
-import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
+import type React from "react"
+
 import { useState } from "react"
-import { toast } from "@/hooks/use-toast"
+import { useRouter, useSearchParams } from "next/navigation"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { AuthLayout } from "@/components/templates/auth-layout"
 
 export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
+
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
-  const [magicLinkAvailable] = useState(
-    !!(
-      process.env.NEXT_PUBLIC_MAGIC_LINK_ENABLED === "true" || process.env.NEXT_PUBLIC_MAGIC_LINK_ENABLED === undefined
-    ),
-  )
-
-  const handleLogin = async (values: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
     setIsLoading(true)
+    setError("")
 
     try {
-      const response = await fetch("/api/auth/signin/credentials", {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email: values.email,
-          password: values.password,
-          callbackUrl,
-        }),
+        body: JSON.stringify({ email, password }),
       })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || "Failed to sign in")
-      }
 
       const data = await response.json()
 
-      if (data.url) {
-        router.push(data.url)
-      } else {
-        router.push(callbackUrl)
-      }
-
-      toast({
-        title: "Success",
-        description: "You have been signed in.",
-      })
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to sign in",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleMagicLink = async (values: any) => {
-    setIsLoading(true)
-
-    try {
-      const response = await fetch("/api/auth/signin/magic-link", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: values.email,
-          callbackUrl,
-        }),
-      })
-
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || "Failed to send magic link")
+        throw new Error(data.error || "Login failed")
       }
 
-      toast({
-        title: "Check your email",
-        description: "A sign in link has been sent to your email address.",
-      })
-
-      router.push("/auth/verify-request")
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to send magic link",
-        variant: "destructive",
-      })
+      // Redirect to the callback URL
+      router.push(callbackUrl)
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "An error occurred")
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <AuthLayout
-      title="Sign in to your account"
-      description="Enter your credentials below to sign in to your account"
-      icon={LogIn}
-      footer={
-        <p className="text-center text-sm text-muted-foreground">
-          Don't have an account?{" "}
-          <Link href="/signup" className="font-medium text-primary underline underline-offset-4 hover:text-primary/90">
-            Sign up
-          </Link>
-        </p>
-      }
-    >
-      <div className="grid gap-6">
-        <AuthForm type="login" onSubmit={handleLogin} isLoading={isLoading} />
-
-        {magicLinkAvailable && (
-          <>
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <Separator className="w-full" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-              </div>
+    <AuthLayout title="Sign in to your account" description="Enter your credentials below to sign in to your account">
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardDescription>Enter your email and password to access your account</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
-
-            <Button
-              variant="outline"
-              type="button"
-              onClick={() =>
-                handleMagicLink({ email: document.querySelector<HTMLInputElement>('input[name="email"]')?.value })
-              }
-              disabled={isLoading}
-            >
-              Magic Link
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && <div className="text-sm text-red-500">{error}</div>}
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Logging in..." : "Login"}
             </Button>
-          </>
-        )}
-      </div>
+          </form>
+        </CardContent>
+        <CardFooter className="flex justify-center">
+          <div className="text-sm text-center">
+            Don&apos;t have an account?{" "}
+            <Link href="/signup" className="text-primary hover:underline">
+              Sign up
+            </Link>
+          </div>
+        </CardFooter>
+      </Card>
     </AuthLayout>
   )
 }

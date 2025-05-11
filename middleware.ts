@@ -1,35 +1,60 @@
-import { auth } from "@/lib/auth"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
-export default auth.createMiddleware({
-  publicRoutes: ["/", "/login", "/signup", "/api/auth/(.*)", "/auth/(.*)", "/storybook(.*)"],
-  afterAuth(req, { session }) {
-    // If the user is not signed in and trying to access a protected route,
-    // redirect them to the login page
-    const isAuthRoute =
-      req.nextUrl.pathname.startsWith("/login") ||
-      req.nextUrl.pathname.startsWith("/signup") ||
-      req.nextUrl.pathname.startsWith("/auth")
+// Define public routes that don't require authentication
+const publicRoutes = ["/", "/login", "/signup", "/api/auth", "/auth", "/storybook"]
 
-    if (!session && !isPublicRoute(req)) {
-      const loginUrl = new URL("/login", req.url)
-      loginUrl.searchParams.set("callbackUrl", req.url)
-      return NextResponse.redirect(loginUrl)
-    }
+// Check if a route is public
+function isPublicRoute(pathname: string): boolean {
+  return publicRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`))
+}
 
-    // If the user is signed in and trying to access an auth route,
-    // redirect them to the dashboard
-    if (session && isAuthRoute) {
-      return NextResponse.redirect(new URL("/dashboard", req.url))
-    }
+// Middleware function to protect routes
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
 
+  // Get the session token from cookies
+  const sessionToken = request.cookies.get("session-token")?.value
+
+  // Check if the user is authenticated
+  const isAuthenticated = !!sessionToken
+
+  // Check if this is an auth route (login, signup, etc.)
+  const isAuthRoute = pathname.startsWith("/login") || pathname.startsWith("/signup") || pathname.startsWith("/auth")
+
+  // If the user is authenticated and trying to access an auth route,
+  // redirect them to the dashboard
+  if (isAuthenticated && isAuthRoute) {
+    return NextResponse.redirect(new URL("/dashboard", request.url))
+  }
+
+  // If the route is public, allow access
+  if (isPublicRoute(pathname)) {
     return NextResponse.next()
-  },
-})
+  }
 
-function isPublicRoute(req: NextRequest): boolean {
-  const publicRoutes = ["/", "/login", "/signup", "/api/auth", "/auth", "/storybook"]
+  // If the user is not authenticated and trying to access a protected route,
+  // redirect them to the login page
+  if (!isAuthenticated) {
+    const loginUrl = new URL("/login", request.url)
+    loginUrl.searchParams.set("callbackUrl", request.url)
+    return NextResponse.redirect(loginUrl)
+  }
 
-  return publicRoutes.some((route) => req.nextUrl.pathname === route || req.nextUrl.pathname.startsWith(`${route}/`))
+  // Allow access to protected routes for authenticated users
+  return NextResponse.next()
+}
+
+// Configure which routes use this middleware
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    "/((?!_next/static|_next/image|favicon.ico|public).*)",
+  ],
 }
