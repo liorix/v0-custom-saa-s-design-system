@@ -24,6 +24,7 @@ import { type ReactNode, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useToast } from "@/hooks/use-toast"
+import { LogoutForm } from "@/components/atoms/logout-form"
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -92,20 +93,35 @@ export function DashboardLayout({
 
     try {
       setIsLoggingOut(true)
+      console.log("Logout initiated")
 
       toast({
         title: "Signing out...",
         description: "Please wait while we sign you out.",
       })
 
-      // Clear all cookies that might be related to authentication
+      // Make a request to the logout API endpoint
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to logout")
+      }
+
+      console.log("API logout successful")
+
+      // Clear cookies on the client side as well for redundancy
       document.cookie = "session-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax"
       document.cookie = "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax"
 
-      // Add a small delay to ensure the toast is shown
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      console.log("Cookies cleared")
 
       // Force a hard navigation to the login page
+      console.log("Redirecting to login page")
       window.location.href = "/login?signedOut=true"
     } catch (error) {
       console.error("Logout error:", error)
@@ -240,11 +256,25 @@ export function DashboardLayout({
           {/* Add the SidebarThemeSwitcher here */}
           <SidebarThemeSwitcher />
 
-          {/* Client-side logout button */}
-          <Button variant="ghost" className="w-full justify-start" onClick={handleLogout} disabled={isLoggingOut}>
-            <LogOut className="mr-2 h-4 w-4" />
-            <span>{isLoggingOut ? "Signing out..." : "Sign out"}</span>
-          </Button>
+          {/* Multiple logout options for redundancy */}
+          <div className="space-y-1">
+            {/* Primary logout button */}
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              data-testid="logout-button"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>{isLoggingOut ? "Signing out..." : "Sign out"}</span>
+            </Button>
+
+            {/* Fallback form-based logout (hidden but functional) */}
+            <div className="hidden">
+              <LogoutForm className="w-full justify-start" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
