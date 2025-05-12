@@ -16,7 +16,7 @@ export async function middleware(request: NextRequest) {
   // Get the session token from cookies
   const sessionToken = request.cookies.get("session-token")?.value
 
-  // Check if the user is authenticated
+  // Check if the user is authenticated based on the presence of a session token
   const isAuthenticated = !!sessionToken
 
   // Check if this is an auth route (login, signup, etc.)
