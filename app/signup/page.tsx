@@ -5,153 +5,91 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { z } from "zod"
-import { AuthLayout } from "@/components/templates/auth-layout"
+import { useAuth } from "@/components/auth-provider"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { toast } from "@/hooks/use-toast"
-
-// Define the form schema
-const signupSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-})
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { AuthLayout } from "@/components/templates/auth-layout"
 
 export default function SignupPage() {
-  const router = useRouter()
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  })
-  const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-    // Clear error when user types
-    if (errors[name]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev }
-        delete newErrors[name]
-        return newErrors
-      })
-    }
-  }
+  const router = useRouter()
+  const { signUp } = useAuth()
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    setErrors({})
+    setError("")
 
     try {
-      // Validate form data
-      const validatedData = signupSchema.parse(formData)
+      const result = await signUp({ name, email, password })
 
-      // Submit the form
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(validatedData),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to sign up")
+      if (result.error) {
+        setError(result.error)
+        setIsLoading(false)
+        return
       }
 
-      // Show success message
-      toast({
-        title: "Account created",
-        description: "Your account has been created successfully",
-      })
-
-      // Redirect to login page
-      router.push("/login")
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        // Handle validation errors
-        const newErrors: Record<string, string> = {}
-        error.errors.forEach((err) => {
-          if (err.path[0]) {
-            newErrors[err.path[0] as string] = err.message
-          }
-        })
-        setErrors(newErrors)
-      } else if (error instanceof Error) {
-        // Handle other errors
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-        })
-      } else {
-        // Fallback error
-        toast({
-          title: "Error",
-          description: "An unexpected error occurred",
-          variant: "destructive",
-        })
-      }
-    } finally {
+      router.push("/dashboard")
+    } catch (err) {
+      setError("An unexpected error occurred")
       setIsLoading(false)
     }
   }
 
   return (
-    <AuthLayout title="Create an account" description="Enter your information to create an account">
+    <AuthLayout>
+      <div className="flex flex-col space-y-2 text-center">
+        <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
+        <p className="text-sm text-muted-foreground">Enter your information to create an account</p>
+      </div>
+
+      {error && (
+        <Alert variant="destructive" className="my-4">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="name">Name</Label>
-          <Input
-            id="name"
-            name="name"
-            placeholder="Enter your name"
-            value={formData.name}
-            onChange={handleChange}
-            disabled={isLoading}
-          />
-          {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+          <Input id="name" placeholder="John Doe" value={name} onChange={(e) => setName(e.target.value)} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
             id="email"
-            name="email"
             type="email"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={handleChange}
-            disabled={isLoading}
+            placeholder="name@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
           />
-          {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
           <Input
             id="password"
-            name="password"
             type="password"
-            placeholder="Create a password"
-            value={formData.password}
-            onChange={handleChange}
-            disabled={isLoading}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
           />
-          {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
         </div>
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? "Creating account..." : "Create account"}
         </Button>
       </form>
+
       <div className="mt-4 text-center text-sm">
         Already have an account?{" "}
-        <Link href="/login" className="font-medium text-primary hover:underline">
+        <Link href="/login" className="font-medium text-primary underline-offset-4 hover:underline">
           Sign in
         </Link>
       </div>

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
+import { getSession } from "@/lib/auth"
 
 // Define public routes that don't require authentication
 const publicRoutes = ["/", "/login", "/signup", "/api/auth", "/auth", "/storybook"]
@@ -13,52 +14,25 @@ function isPublicRoute(pathname: string): boolean {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Get the session token from cookies
-  const sessionToken = request.cookies.get("session-token")?.value
-
-  // Check if the user is authenticated based on the presence of a session token
-  const isAuthenticated = !!sessionToken
-
-  // Check if this is an auth route (login, signup, etc.)
-  const isAuthRoute = pathname.startsWith("/login") || pathname.startsWith("/signup") || pathname.startsWith("/auth")
-
-  // If the user is authenticated and trying to access an auth route,
-  // redirect them to the dashboard
-  if (isAuthenticated && isAuthRoute) {
-    return NextResponse.redirect(new URL("/dashboard", request.url))
-  }
-
   // If the route is public, allow access
   if (isPublicRoute(pathname)) {
     return NextResponse.next()
   }
 
+  // Use our unified auth module to check authentication
+  const session = await getSession(request)
+
   // If the user is not authenticated and trying to access a protected route,
   // redirect them to the login page
-  if (!isAuthenticated) {
+  if (!session) {
     const loginUrl = new URL("/login", request.url)
     loginUrl.searchParams.set("callbackUrl", request.url)
 
-    // Create a response with cache control headers
-    const response = NextResponse.redirect(loginUrl)
-
-    // Add cache control headers to prevent caching
-    response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate")
-    response.headers.set("Pragma", "no-cache")
-    response.headers.set("Expires", "0")
-    response.headers.set("Surrogate-Control", "no-store")
-
-    return response
+    return NextResponse.redirect(loginUrl)
   }
 
-  // For authenticated users accessing protected routes, add cache control headers
-  const response = NextResponse.next()
-  response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate")
-  response.headers.set("Pragma", "no-cache")
-  response.headers.set("Expires", "0")
-  response.headers.set("Surrogate-Control", "no-store")
-
-  return response
+  // For authenticated users accessing protected routes
+  return NextResponse.next()
 }
 
 // Configure which routes use this middleware

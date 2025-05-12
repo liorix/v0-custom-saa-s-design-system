@@ -1,124 +1,55 @@
-import { NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from "next/server"
 import { cookies } from "next/headers"
-import { neon } from "@neondatabase/serverless"
+import { jwtVerify } from "jose"
 
-// Initialize the database connection
-const sql = neon(process.env.DATABASE_URL!)
+// Mock user for preview mode
+const MOCK_USER = {
+  id: "preview-user-id",
+  name: "Preview User",
+  email: "preview@example.com",
+  image: null,
+}
 
-export async function GET() {
+// Secret key for JWT
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.BETTER_AUTH_SECRET || process.env.NEXTAUTH_SECRET || "your-secret-key-min-32-chars-long",
+)
+
+export async function GET(req: NextRequest) {
   try {
-    // Get the session token
-    const sessionToken = cookies().get("session-token")?.value
+    // Get session token from cookie
+    const cookieStore = cookies()
+    const token = cookieStore.get("session-token")?.value
 
-    if (!sessionToken) {
-      return new NextResponse(JSON.stringify({ user: null }), {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-          Pragma: "no-cache",
-          Expires: "0",
-          "Surrogate-Control": "no-store",
-        },
-      })
+    if (!token) {
+      console.log("No session token found")
+      return NextResponse.json({ session: null })
     }
 
-    // Get the session from the database
-    const sessions = await sql`
-      SELECT * FROM sessions
-      WHERE session_token = ${sessionToken}
-      AND expires > NOW()
-      LIMIT 1
-    `
+    try {
+      // Verify JWT
+      const { payload } = await jwtVerify(token, JWT_SECRET)
 
-    if (!sessions || sessions.length === 0) {
-      // Clear the invalid session cookie
-      cookies().delete({
-        name: "session-token",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-        httpOnly: true,
-        sameSite: "lax",
-      })
+      if (!payload || !payload.sub) {
+        console.log("Invalid JWT payload")
+        return NextResponse.json({ session: null })
+      }
 
-      return new NextResponse(JSON.stringify({ user: null }), {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-          Pragma: "no-cache",
-          Expires: "0",
-          "Surrogate-Control": "no-store",
-        },
-      })
+      // In preview mode, return mock session
+      console.log("Valid session found for user ID:", payload.sub)
+
+      const session = {
+        user: MOCK_USER,
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+      }
+
+      return NextResponse.json({ session })
+    } catch (error) {
+      console.error("JWT verification failed:", error)
+      return NextResponse.json({ session: null })
     }
-
-    const session = sessions[0]
-
-    // Get the user from the database
-    const users = await sql`
-      SELECT id, name, email, image
-      FROM users
-      WHERE id = ${session.user_id}
-      LIMIT 1
-    `
-
-    if (!users || users.length === 0) {
-      // Clear the session if user doesn't exist
-      cookies().delete({
-        name: "session-token",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-        httpOnly: true,
-        sameSite: "lax",
-      })
-
-      return new NextResponse(JSON.stringify({ user: null }), {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-          Pragma: "no-cache",
-          Expires: "0",
-          "Surrogate-Control": "no-store",
-        },
-      })
-    }
-
-    const user = users[0]
-
-    // Return the user data with cache control headers
-    return new NextResponse(
-      JSON.stringify({
-        user: {
-          id: user.id.toString(),
-          name: user.name,
-          email: user.email,
-          image: user.image,
-        },
-      }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-          Pragma: "no-cache",
-          Expires: "0",
-          "Surrogate-Control": "no-store",
-        },
-      },
-    )
   } catch (error) {
-    console.error("Session error:", error)
-    return new NextResponse(JSON.stringify({ user: null }), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-        Pragma: "no-cache",
-        Expires: "0",
-        "Surrogate-Control": "no-store",
-      },
-    })
+    console.error("Error in session route:", error)
+    return NextResponse.json({ session: null })
   }
 }

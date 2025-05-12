@@ -1,133 +1,26 @@
-import { neon } from "@neondatabase/serverless"
-import * as bcryptjs from "bcryptjs" // Changed from bcrypt to bcryptjs
+// This file provides a unified API that works in both preview and production
+import { betterAuth as compatAuth, useSession as compatUseSession } from "./better-auth-compat"
 
-// Initialize the database connection
-const sql = neon(process.env.DATABASE_URL!)
+// Check if we're in preview mode (v0 environment)
+const isPreviewMode =
+  process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ||
+  process.env.NODE_ENV === "development" ||
+  (typeof window !== "undefined" && window.location.hostname.includes(".lite.vusercontent.net"))
 
-// Create a simple auth utility
-export const auth = {
-  // User authentication
-  async signIn(email: string, password: string) {
-    try {
-      const result = await sql`
-        SELECT * FROM users WHERE email = ${email} LIMIT 1
-      `
-
-      const user = result[0]
-
-      if (!user || !user.password) {
-        return null
-      }
-
-      const isPasswordValid = await bcryptjs.compare(password, user.password) // Using bcryptjs.compare
-
-      if (!isPasswordValid) {
-        return null
-      }
-
-      return {
-        id: user.id.toString(),
-        name: user.name,
-        email: user.email,
-        image: user.image,
-      }
-    } catch (error) {
-      console.error("Authentication error:", error)
-      return null
-    }
-  },
-
-  // Create a new user
-  async createUser(data: { name: string; email: string; password: string }) {
-    const salt = await bcryptjs.genSalt(10) // Using bcryptjs.genSalt
-    const hashedPassword = await bcryptjs.hash(data.password, salt) // Using bcryptjs.hash
-
-    try {
-      const result = await sql`
-        INSERT INTO users (name, email, password)
-        VALUES (${data.name}, ${data.email}, ${hashedPassword})
-        RETURNING id, name, email
-      `
-
-      return result[0]
-    } catch (error) {
-      console.error("Error creating user:", error)
-      throw new Error("Failed to create user")
-    }
-  },
-
-  // Get user by email
-  async getUserByEmail(email: string) {
-    try {
-      const result = await sql`
-        SELECT * FROM users WHERE email = ${email} LIMIT 1
-      `
-
-      return result[0]
-    } catch (error) {
-      console.error("Error getting user by email:", error)
-      return null
-    }
-  },
-
-  // Get user by ID
-  async getUserById(id: string) {
-    try {
-      const result = await sql`
-        SELECT * FROM users WHERE id = ${Number.parseInt(id)} LIMIT 1
-      `
-
-      return result[0]
-    } catch (error) {
-      console.error("Error getting user by ID:", error)
-      return null
-    }
-  },
-
-  // Update user
-  async updateUser(id: string, data: Partial<{ name: string; email: string; password: string }>) {
-    try {
-      const updates = []
-      const values = []
-
-      if (data.name) {
-        updates.push(`name = ${data.name}`)
-      }
-
-      if (data.email) {
-        updates.push(`email = ${data.email}`)
-      }
-
-      if (data.password) {
-        const salt = await bcryptjs.genSalt(10) // Using bcryptjs.genSalt
-        const hashedPassword = await bcryptjs.hash(data.password, salt) // Using bcryptjs.hash
-        updates.push(`password = ${hashedPassword}`)
-      }
-
-      if (updates.length === 0) {
-        return null
-      }
-
-      const updateQuery = `
-        UPDATE users
-        SET ${updates.join(", ")}
-        WHERE id = ${Number.parseInt(id)}
-        RETURNING id, name, email
-      `
-
-      const result = await sql.query(updateQuery)
-
-      return result.rows[0]
-    } catch (error) {
-      console.error("Error updating user:", error)
-      throw new Error("Failed to update user")
-    }
-  },
-
-  // Session management will be handled via cookies in the API routes
+// In preview mode, always use our compatibility layer
+if (isPreviewMode) {
+  console.log("Using Better Auth compatibility layer (preview mode)")
 }
 
-// Export the auth utilities
-export { auth as default }
+// Export everything from the compatibility layer
+// In production, you would replace these imports with imports from @better-auth/next
+export const { getSession, signIn, signUp, signOut, handler } = compatAuth
+export const useSession = compatUseSession
 
-export const updateUser = auth.updateUser
+// Export a unified auth object
+export const auth = compatAuth
+
+// Add a note for production deployment
+if (!isPreviewMode) {
+  console.log("IMPORTANT: In production, replace imports in lib/auth.ts with @better-auth/next")
+}

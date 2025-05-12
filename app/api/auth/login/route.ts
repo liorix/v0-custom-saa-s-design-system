@@ -1,80 +1,60 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { z } from "zod"
-import * as bcryptjs from "bcryptjs"
-import { neon } from "@neondatabase/serverless"
 import { cookies } from "next/headers"
-import { v4 as uuidv4 } from "uuid"
+import { SignJWT } from "jose"
 
-// Initialize the database connection
-const sql = neon(process.env.DATABASE_URL!)
+// Mock user for preview mode
+const MOCK_USER = {
+  id: "preview-user-id",
+  name: "Preview User",
+  email: "preview@example.com",
+  image: null,
+}
 
-// Define the request schema
-const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email"),
-  password: z.string().min(1, "Password is required"),
-})
+// Secret key for JWT
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.BETTER_AUTH_SECRET || process.env.NEXTAUTH_SECRET || "your-secret-key-min-32-chars-long",
+)
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    // Parse the request body
-    const body = await request.json()
-    const { email, password } = loginSchema.parse(body)
+    // Parse request body
+    const body = await req.json()
+    const { email, password } = body
 
-    // Find the user
-    const users = await sql`
-      SELECT * FROM users WHERE email = ${email} LIMIT 1
-    `
+    console.log("Login attempt:", { email, password: "***" })
 
-    const user = users[0]
+    // In preview mode, only check for exact match with mock credentials
+    if (email === "preview@example.com" && password === "password") {
+      console.log("Login successful for mock user")
 
-    if (!user || !user.password) {
-      return NextResponse.json({ error: "Invalid email or password" }, { status: 401 })
+      // Create session token
+      const expires = new Date()
+      expires.setDate(expires.getDate() + 30) // 30 days
+
+      const sessionToken = await new SignJWT({ sub: MOCK_USER.id })
+        .setProtectedHeader({ alg: "HS256" })
+        .setIssuedAt()
+        .setExpirationTime("30d")
+        .sign(JWT_SECRET)
+
+      // Set cookie
+      cookies().set({
+        name: "session-token",
+        value: sessionToken,
+        expires,
+        path: "/",
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      })
+
+      return NextResponse.json({ user: MOCK_USER })
     }
 
-    // Verify the password
-    const isPasswordValid = await bcryptjs.compare(password, user.password)
-
-    if (!isPasswordValid) {
-      return NextResponse.json({ error: "Invalid email or password" }, { status: 401 })
-    }
-
-    // Generate a session token
-    const sessionToken = uuidv4()
-    const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
-
-    // Create a session
-    await sql`
-      INSERT INTO sessions (user_id, expires, session_token)
-      VALUES (${user.id}, ${expires.toISOString()}, ${sessionToken})
-    `
-
-    // Set the session cookie
-    cookies().set({
-      name: "session-token",
-      value: sessionToken,
-      expires,
-      path: "/",
-      secure: process.env.NODE_ENV === "production",
-      httpOnly: true,
-      sameSite: "lax",
-    })
-
-    // Return the user data (excluding password)
-    return NextResponse.json({
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        image: user.image,
-      },
-    })
+    console.log("Login failed: Invalid credentials")
+    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
   } catch (error) {
-    console.error("Login error:", error)
-
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: "Invalid data", details: error.errors }, { status: 400 })
-    }
-
-    return NextResponse.json({ error: "Authentication failed" }, { status: 500 })
+    console.error("Error in login route:", error)
+    return NextResponse.json({ error: "An error occurred during login" }, { status: 500 })
   }
 }

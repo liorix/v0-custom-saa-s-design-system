@@ -1,30 +1,43 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useEffect, useState } from "react"
 
-type SessionContextType = {
-  session: any | null
+import { createContext, useContext, useEffect, useState } from "react"
+import { getSession } from "@/lib/better-auth"
+
+// Define session types
+type User = {
+  id: string
+  name: string | null
+  email: string
+  image?: string | null
+}
+
+type Session = {
+  user: User | null
+  expires: string
+}
+
+type BetterAuthContextType = {
+  session: Session | null
   loading: boolean
 }
 
-const SessionContext = createContext<SessionContextType>({
+// Create context
+const BetterAuthContext = createContext<BetterAuthContextType>({
   session: null,
   loading: true,
 })
 
 export function BetterAuthProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<any | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadSession() {
       try {
-        const response = await fetch("/api/auth/session")
-        if (response.ok) {
-          const data = await response.json()
-          setSession(data)
-        }
+        const session = await getSession()
+        setSession(session)
       } catch (error) {
         console.error("Failed to load session:", error)
       } finally {
@@ -35,9 +48,9 @@ export function BetterAuthProvider({ children }: { children: React.ReactNode }) 
     loadSession()
   }, [])
 
-  return <SessionContext.Provider value={{ session, loading }}>{children}</SessionContext.Provider>
+  return <BetterAuthContext.Provider value={{ session, loading }}>{children}</BetterAuthContext.Provider>
 }
 
 export function useSession() {
-  return useContext(SessionContext)
+  return useContext(BetterAuthContext)
 }

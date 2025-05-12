@@ -1,26 +1,27 @@
 import type React from "react"
-import { ThemeProvider } from "@/components/theme-provider"
-import { BetterAuthProvider } from "@/components/better-auth-provider"
-import { StorybookNav } from "@/components/storybook-nav"
-import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
+import type { Metadata } from "next"
+import { ThemeProvider } from "@/components/theme-provider"
+import { AuthProvider } from "@/components/auth-provider"
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const metadata: Metadata = {
+  title: "SaaS Design System",
+  description: "A comprehensive design system for SaaS applications",
+    generator: 'v0.dev'
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <BetterAuthProvider>
-          <ThemeProvider>
-            {children}
-            <StorybookNav />
-            <Toaster />
-          </ThemeProvider>
-        </BetterAuthProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <AuthProvider>{children}</AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
 }
-
-export const metadata = {
-      generator: 'v0.dev'
-    };

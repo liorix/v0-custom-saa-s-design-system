@@ -11,6 +11,7 @@ import { Loader2, Save, User } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { useSession } from "@/components/better-auth-provider"
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -21,7 +22,7 @@ type ProfileFormValues = z.infer<typeof profileSchema>
 
 export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false)
-  const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null)
+  const { session } = useSession()
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -32,39 +33,13 @@ export default function ProfilePage() {
   })
 
   useEffect(() => {
-    async function fetchUserProfile() {
-      setIsLoading(true)
-
-      try {
-        const response = await fetch("/api/auth/session")
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch user profile")
-        }
-
-        const data = await response.json()
-
-        if (data.user) {
-          setUser(data.user)
-          form.reset({
-            name: data.user.name || "",
-            email: data.user.email || "",
-          })
-        }
-      } catch (error) {
-        console.error("Error fetching user profile:", error)
-        toast({
-          title: "Error",
-          description: "Failed to load your profile",
-          variant: "destructive",
-        })
-      } finally {
-        setIsLoading(false)
-      }
+    if (session?.user) {
+      form.reset({
+        name: session.user.name || "",
+        email: session.user.email || "",
+      })
     }
-
-    fetchUserProfile()
-  }, [form])
+  }, [session, form])
 
   const onSubmit = async (values: ProfileFormValues) => {
     setIsLoading(true)
@@ -81,9 +56,6 @@ export default function ProfilePage() {
       if (!response.ok) {
         throw new Error("Failed to update profile")
       }
-
-      const updatedUser = await response.json()
-      setUser(updatedUser)
 
       toast({
         title: "Profile updated",
@@ -154,7 +126,7 @@ export default function ProfilePage() {
           </CardContent>
           <CardFooter className="border-t bg-muted/50 px-6 py-4">
             <p className="text-xs text-muted-foreground">
-              Last updated: {user ? new Date().toLocaleDateString() : "Never"}
+              Last updated: {session?.user ? new Date().toLocaleDateString() : "Never"}
             </p>
           </CardFooter>
         </Card>
