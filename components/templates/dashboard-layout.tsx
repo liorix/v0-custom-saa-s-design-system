@@ -19,10 +19,11 @@ import {
   User,
 } from "lucide-react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { type ReactNode, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { useToast } from "@/hooks/use-toast"
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -42,7 +43,10 @@ export function DashboardLayout({
   className,
 }: DashboardLayoutProps) {
   const pathname = usePathname()
+  const router = useRouter()
+  const { toast } = useToast()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const mainNavItems = [
     {
@@ -82,6 +86,37 @@ export function DashboardLayout({
       icon: FileText,
     },
   ]
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return
+
+    try {
+      setIsLoggingOut(true)
+
+      toast({
+        title: "Signing out...",
+        description: "Please wait while we sign you out.",
+      })
+
+      // Clear all cookies that might be related to authentication
+      document.cookie = "session-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax"
+      document.cookie = "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax"
+
+      // Add a small delay to ensure the toast is shown
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
+      // Force a hard navigation to the login page
+      window.location.href = "/login?signedOut=true"
+    } catch (error) {
+      console.error("Logout error:", error)
+      toast({
+        title: "Error signing out",
+        description: "There was an issue signing you out. Please try again.",
+        variant: "destructive",
+      })
+      setIsLoggingOut(false)
+    }
+  }
 
   // Sidebar content component to reuse in both desktop and mobile
   const SidebarContent = () => (
@@ -205,15 +240,11 @@ export function DashboardLayout({
           {/* Add the SidebarThemeSwitcher here */}
           <SidebarThemeSwitcher />
 
-          {/* Simple direct link to the sign-out page */}
-          <Link
-            href="/signout"
-            className="w-full flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent/50"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            <LogOut className="h-4 w-4" />
-            <span>Sign out</span>
-          </Link>
+          {/* Client-side logout button */}
+          <Button variant="ghost" className="w-full justify-start" onClick={handleLogout} disabled={isLoggingOut}>
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>{isLoggingOut ? "Signing out..." : "Sign out"}</span>
+          </Button>
         </div>
       </div>
     </div>

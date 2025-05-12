@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { z } from "zod"
@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "@/hooks/use-toast"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { CheckCircle2 } from "lucide-react"
 
 // Define the form schema
 const loginSchema = z.object({
@@ -22,6 +24,7 @@ export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
+  const signedOut = searchParams.get("signedOut") === "true"
 
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -29,6 +32,16 @@ export default function LoginPage() {
     password: "",
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  // Show toast when signed out
+  useEffect(() => {
+    if (signedOut) {
+      toast({
+        title: "Signed out",
+        description: "You have been signed out successfully",
+      })
+    }
+  }, [signedOut])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -107,6 +120,13 @@ export default function LoginPage() {
 
   return (
     <AuthLayout title="Sign in to your account" description="Enter your email to sign in to your account">
+      {signedOut && (
+        <Alert className="mb-4 bg-green-50 text-green-800 border-green-200">
+          <CheckCircle2 className="h-4 w-4 text-green-600" />
+          <AlertDescription>You have been signed out successfully.</AlertDescription>
+        </Alert>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
